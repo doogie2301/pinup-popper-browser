@@ -1,0 +1,20 @@
+extends layout
+
+block content
+
+    nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
+        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownMenuLink", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Categories
+        div.dropdown-menu(aria-labelledby="navbarDropdownMenuLink")
+            a.dropdown-item(href="#") Music
+            a.dropdown-item(href="#") Movies
+            a.dropdown-item(href="#") TV
+        form.form-inline
+            input.formcontrol.mr-sm-2(type='search', placeholder='Search', aria-label='Search')
+            button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Search
+
+    div.container-fluid
+        div.row.no-gutters
+            each game in games
+                div.col-6.col-md-4.col-lg-2
+                    a(href='/games/'+game.id, title=game.display)
+                        image.wheel(src='/media/'+game.emulator+'/Wheel/'+game.display+'.png')

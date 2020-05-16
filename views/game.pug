@@ -1,0 +1,26 @@
+extends layout
+
+block content
+
+    nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
+        a.navbar-brand(href='#') #{game.display}
+        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+        div.collapse.navbar-collapse(id='navbarNav')
+            div.navbar-nav
+                a.nav-item.nav-link(href='/') Home
+                a.nav-item.nav-link High Scores
+                a.nav-item.nav-link Flyers
+    
+    div.container-fluid
+        div.row
+            div.col-5
+                image.wheel(src='/media/'+game.emulator+'/Wheel/'+game.display+'.png')
+            div.col-7 
+                div Year: #{game.year}
+                div Number of Players: #{game.numPlayers}
+                div Manufacturer: #{game.manufacturer}
+                div 
+                    button.btn.btn-primary(type='button') Launch
+
+    

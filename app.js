@@ -4,7 +4,7 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-
+var settings = require("app-settings");
 var routes = require('./routes/index');
 
 var app = express();
@@ -15,7 +15,7 @@ var gameIds = new Map();
 const sqlite3 = require('sqlite3').verbose();
 
 // open the database
-let db = new sqlite3.Database('/PinUPSystem/PUPDatabase.db', (err) => {
+let db = new sqlite3.Database(settings.db.path, (err) => {
     if (err) {
         console.error(err.message);
     }
@@ -23,10 +23,12 @@ let db = new sqlite3.Database('/PinUPSystem/PUPDatabase.db', (err) => {
 });
 
 
-let sql = 'select g.gameid, gamename, gamedisplay, gametype, emudisplay, dirmedia, gameyear, numplayers, manufact, LastPlayed, NumberPlays, TimePlayedSecs '
+let sql = 'select g.gameid, gamename, gamedisplay, gametype, emudisplay, dirmedia, gameyear, numplayers, manufact, LastPlayed, NumberPlays, TimePlayedSecs, '
+    + 'category, gametheme '
     + 'from games g join emulators e on g.emuid = e.emuid '
     + 'left join gamesstats s on g.gameid = s.gameid '
-    + 'order by gamedisplay';
+    + (settings.db.whereClause || '')
+    + ' order by gamedisplay';
 
 db.all(sql, [], (err, rows) => {
     if (err) {
@@ -40,6 +42,8 @@ db.all(sql, [], (err, rows) => {
                 name: row.GameName,
                 display: row.GameDisplay,
                 type: row.GameType,
+                category: row.Category,
+                theme: row.GameTheme,
                 year: row.GameYear,
                 numPlayers: row.NumPlayers,
                 manufacturer: row.Manufact,
@@ -71,7 +75,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/media', express.static('/PinUPSystem/POPMedia'));
+app.use('/media', express.static(settings.pupServer.mediaDirRoot));
 
 app.use('/', routes);
 
@@ -108,11 +112,7 @@ app.use(function (err, req, res, next) {
 });
 
 
-
-
-
-
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || settings.remoteServer.port);
 
 var server = app.listen(app.get('port'), function () {
     debug('Express server listening on port ' + server.address().port);

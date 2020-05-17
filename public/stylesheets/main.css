@@ -4,4 +4,5 @@ body {
 
 .wheel {
     width: 100%;
+    transform: rotate(-270deg);
 }

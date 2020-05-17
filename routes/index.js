@@ -4,12 +4,13 @@ var router = express.Router();
 
 router.get('/games/:gameId', function (req, res) {
     let gameId = parseInt(req.params["gameId"]);
-    res.render('game', { game: req.app.locals.games.get(gameId) });
+    let gamePos = req.app.locals.gameIds.get(gameId);
+    res.render('game', { game: req.app.locals.games[gamePos] });
 });
 
 /* GET home page. */
 router.get('/', function (req, res) {
-    res.render('index', { games: Object.fromEntries(req.app.locals.games) });
+    res.render('index', { games: req.app.locals.games });
 });
 
 module.exports = router;

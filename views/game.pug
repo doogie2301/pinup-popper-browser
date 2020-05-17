@@ -15,11 +15,12 @@ block content
     div.container-fluid
         div.row
             div.col-5
-                image.wheel(src='/media/'+game.emulator+'/Wheel/'+game.display+'.png')
+                image.wheel(src='/media/'+game.emulator+'/Wheel/'+game.name+'.png')
             div.col-7 
                 div Year: #{game.year}
-                div Number of Players: #{game.numPlayers}
                 div Manufacturer: #{game.manufacturer}
+                div Number of Players: #{game.numPlayers}
+                div Emulator: #{game.emulator}
                 div 
                     button.btn.btn-primary(type='button') Launch
 

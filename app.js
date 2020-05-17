@@ -9,7 +9,8 @@ var routes = require('./routes/index');
 
 var app = express();
 
-var games = new Map();
+var games = [];
+var gameIds = new Map();
 
 const sqlite3 = require('sqlite3').verbose();
 
@@ -22,15 +23,18 @@ let db = new sqlite3.Database('/PinUPSystem/PUPDatabase.db', (err) => {
 });
 
 
-let sql = 'select gameid, gamename, gamedisplay, gametype, emudisplay, gameyear, numplayers, manufact '
-    + 'from games g join emulators e on g.emuid = e.emuid order by gamedisplay';
+let sql = 'select g.gameid, gamename, gamedisplay, gametype, emudisplay, dirmedia, gameyear, numplayers, manufact, LastPlayed, NumberPlays, TimePlayedSecs '
+    + 'from games g join emulators e on g.emuid = e.emuid '
+    + 'left join gamesstats s on g.gameid = s.gameid '
+    + 'order by gamedisplay';
 
 db.all(sql, [], (err, rows) => {
     if (err) {
         throw err;
     }
+    var i = 0;
     rows.forEach((row) => {
-        games.set(row.GameID,
+        games.push(
             {
                 id: row.GameID,
                 name: row.GameName,
@@ -39,8 +43,14 @@ db.all(sql, [], (err, rows) => {
                 year: row.GameYear,
                 numPlayers: row.NumPlayers,
                 manufacturer: row.Manufact,
-                emulator: row.EmuDisplay
-        });
+                emulator: row.EmuDisplay,
+                dirMedia: row.DirMedia.split('\\').pop(),
+                lastPlayed: row.LastPlayed,
+                numPlays: row.NumberPlays,
+                timePlayed: row.TimePlayedSecs
+            });
+        gameIds.set(row.GameID, i);
+        i++;
     });
 });
 
@@ -48,6 +58,7 @@ db.all(sql, [], (err, rows) => {
 db.close();
 
 app.locals.games = games;
+app.locals.gameIds = gameIds;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

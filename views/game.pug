@@ -7,21 +7,51 @@ block content
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
             span.navbar-toggler-icon
         div.collapse.navbar-collapse(id='navbarNav')
-            div.navbar-nav
-                a.nav-item.nav-link(href='/') Home
-                a.nav-item.nav-link High Scores
-                a.nav-item.nav-link Flyers
+            ul.navbar-nav.nav(id='tabs')
+                li.nav-item
+                    a.nav-link(href='#home', data-toggle='tab') Home
+                li.nav-item
+                    a.nav-link(href='#info', data-toggle='tab') Info
+                li.nav-item
+                    a.nav-link(href='#help', data-toggle='tab') Help
+                li.nav-item
+                    a.nav-link(href='#media', data-toggle='tab') Media
     
     div.container-fluid
-        div.row
-            div.col-5
-                image.wheel(src='/media/'+game.emulator+'/Wheel/pthumbs/'+game.name+'_thumb.png')
-            div.col-7 
-                div Year: #{game.year}
-                div Manufacturer: #{game.manufacturer}
-                div Number of Players: #{game.numPlayers}
-                div Emulator: #{game.emulator}
-                div 
-                    button.btn.btn-primary(type='button', onclick='launchGame('+game.id+')') Launch Game
+        div.tab-content
+            div.tab-pane.fade(id='home')
+                div.row
+                    div.col-5
+                        image.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
+                    div.col-7
+                        h4
+                            span.badge.badge-primary Year 
+                                span.badge.badge-light #{game.year}
+                        h4
+                            span.badge.badge-secondary Manufacturer 
+                                span.badge.badge-light #{game.manufacturer}
+                        h4
+                            span.badge.badge-success Number of Players 
+                                span.badge.badge-light #{game.numPlayers}
+                        h4
+                            span.badge.badge-danger Emulator 
+                                span.badge.badge-light #{game.emulator}                
+                        h4
+                            span.badge.badge-warning Times Played 
+                                span.badge.badge-light #{game.numPlays || 0}    
+                        h4
+                            span.badge.badge-info Last Played 
+                                span.badge.badge-light #{game.lastPlayed ? game.lastPlayed.toLocaleString() : 'Never'}                        
+                        hr
+                        div.row
+                            div.col-auto
+                                button.btn.btn-primary(id='btnLaunch', type='button', data-id=game.id) Launch Game
+                            div.col(id='response')
+                        div.mt-2
+                            button.btn.btn-secondary(id='btnBack', type='button') Go Back
+            div.tab-pane.fade(id='info')
+            div.tab-pane.fade(id='help')
+            div.tab-pane.fade(id='media')
+
 
     

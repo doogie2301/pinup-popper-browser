@@ -3,19 +3,49 @@ extends layout
 block content
 
     nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
-        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownMenuLink", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Categories
-        a.nav-link(href="/games/current") Current Game
-        div.dropdown-menu(aria-labelledby="navbarDropdownMenuLink")
-            a.dropdown-item(href="#") Music
-            a.dropdown-item(href="#") Movies
-            a.dropdown-item(href="#") TV
-        form.form-inline
-            input.formcontrol.mr-sm-2(type='search', placeholder='Search', aria-label='Search')
-            button.btn.btn-outline-light.my-2.my-sm-0(type='submit') Search
-
+        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+        div.collapse.navbar-collapse(id='navbarNav')
+            ul.navbar-nav.mr-auto
+                li.nav-item
+                    a.nav-link(href="/games/current") Current Game
+                if categories
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownCat", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Category
+                        div.dropdown-menu(aria-labelledby="navbarDropdownCat")
+                            each category in categories
+                                a.dropdown-item(href="#", data-filter="category") #{category}
+                if themes
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownTheme", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Theme
+                        div.dropdown-menu(aria-labelledby="navbarDropdownTheme")
+                            each theme in themes
+                                a.dropdown-item(href="#", data-filter="theme") #{theme}
+                if decades
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownDecade", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Decade
+                        div.dropdown-menu(aria-labelledby="navbarDropdownDecade")
+                            each decade in decades
+                                a.dropdown-item(href="#", data-filter="decade") #{decade}
+                if manufacturers
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownManufact", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Manufacturer
+                        div.dropdown-menu(aria-labelledby="navbarDropdownManufact")
+                            each manufact in manufacturers
+                                a.dropdown-item(href="#", data-filter="manufact") #{manufact}
+                if emulators
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownEmulator", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Emulator
+                        div.dropdown-menu(aria-labelledby="navbarDropdownEmulator")
+                            each emulator in emulators
+                                a.dropdown-item(href="#", data-filter="emulator") #{emulator}
+            form.form-inline
+                div.md-form.my-0
+                    input.formcontrol.mr-sm-2(id='gameSearch', type='search', placeholder='Search', aria-label='Search')
+  
     div.container-fluid
-        div.row.no-gutters
+        div.row.no-gutters(id='gamesRow')
             each game in games
-                div.col-6.col-md-4.col-lg-2
-                    a(href='/games/'+game.id, title=game.display)
+                div.col-6.col-md-4.col-lg-2(data-category=game.category, data-theme=game.theme, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator)
+                    a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
                         image.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')

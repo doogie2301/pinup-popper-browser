@@ -15,7 +15,7 @@ var gameIds = new Map();
 const sqlite3 = require('sqlite3').verbose();
 
 // open the database
-let db = new sqlite3.Database(settings.db.path, (err) => {
+let db = new sqlite3.Database(settings.pupServer.db.path, (err) => {
     if (err) {
         console.error(err.message);
     }
@@ -27,8 +27,8 @@ let sql = 'select g.gameid, gamename, gamedisplay, gametype, emudisplay, dirmedi
     + 'category, gametheme '
     + 'from games g join emulators e on g.emuid = e.emuid '
     + 'left join gamesstats s on g.gameid = s.gameid '
-    + (settings.db.whereClause || '')
-    + ' order by gamedisplay';
+    + (settings.pupServer.db.filter ? ' where ' + settings.pupServer.db.filter : '')
+    + 'order by gamedisplay';
 
 db.all(sql, [], (err, rows) => {
     if (err) {
@@ -50,8 +50,9 @@ db.all(sql, [], (err, rows) => {
                 emulator: row.EmuDisplay,
                 dirMedia: row.DirMedia.split('\\').pop(),
                 lastPlayed: row.LastPlayed,
-                numPlays: row.NumberPlays,
-                timePlayed: row.TimePlayedSecs
+                numPlays: row.NumberPlays || 0,
+                timePlayed: row.TimePlayedSecs || 0,
+                decade: row.GameYear ? parseInt(row.GameYear) - (parseInt(row.GameYear) % 10) : ''
             });
         gameIds.set(row.GameID, i);
         i++;
@@ -63,6 +64,8 @@ db.close();
 
 app.locals.games = games;
 app.locals.gameIds = gameIds;
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

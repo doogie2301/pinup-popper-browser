@@ -1,11 +1,18 @@
 pupServer:
   url: http://localhost
   mediaDirRoot: /PinUpSystem/POPMedia
+  db:
+    path: /PinUpSystem/PUPDatabase.db
+    filter: ifnull(GameTheme, 1) <> 'Adult'
 	
 remoteServer:
   port: 3000
+  filters:
+    category: true
+    theme: true
+    decade: true
+    emulator: true
+    manufacturer: false
 
-db:
-  path: /PinUPSystem/PUPDatabase.db
-  whereClause: where ifnull(GameTheme, 1) <> 'Adult'
+
 

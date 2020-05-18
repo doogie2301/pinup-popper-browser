@@ -4,35 +4,75 @@ var settings = require("app-settings");
 var router = express.Router({ mergeParams: true });
 const axios = require("axios");
 
+var getCurItemUrl = settings.pupServer.url + "/function/getcuritem";
+var launchUrl = settings.pupServer.url + "/function/launchgame/";
+var exitUrl = settings.pupServer.url + "/pupkey/15";
+
 router.get('/games/:gameId', function (req, res) {
     let gameId = req.params["gameId"];
-    if (gameId == "current") {
-        axios.get(settings.pupServer.url + "/function/getcuritem").then( (response) => {
-            gameId = response.data.GameID;
-        })
-    };
+
     if ('launch' in req.query) {
-        axios.get(settings.pupServer.url + "/function/launchgame/" + gameId).then((response) => {
-            console.log(response.data);
-            axios.get(settings.pupServer.url + "/function/launchgame/" + gameId).then((response) => {
-                console.log(response.data);
+        // exit emulation first
+        axios.get(exitUrl).then(() => {
+            axios.get(launchUrl + gameId).then(() => {
                 res.send('OK');
-            });
+            }).catch(() => {
+                res.status(500);
+                res.send('ERROR');
+            })
+        }).catch(() => {
+            res.status(500);
+            res.send('ERROR');
+        });
+    } else if (gameId == "current") {
+        axios.get(getCurItemUrl).then((response) => {
+            gameId = response.data.GameID;
+            renderGame(req, res, gameId);
+        }).catch(() => {
+            res.status(500);
+            res.send('ERROR');
         });
     } else {
-        let gamePos = req.app.locals.gameIds.get(parseInt(gameId));
-        if (gamePos === undefined) {
-            res.status(404);
-            res.send('Not found');
-        } else {
-            res.render('game', { game: req.app.locals.games[gamePos] });
-        }
+        renderGame(req, res, gameId);
     }
 });
 
+function renderGame(req, res, gameId) {
+    let gamePos = req.app.locals.gameIds.get(parseInt(gameId));
+    if (gamePos === undefined) {
+        res.status(404);
+        res.send('NOT FOUND');
+    } else {
+        res.render('game', { game: req.app.locals.games[gamePos] });
+    }
+}
+
 /* GET home page. */
 router.get('/', function (req, res) {
-    res.render('index', { games: req.app.locals.games });
+    let categories, themes, decades, manufacturers, emulators;
+    if (settings.remoteServer.filters.category)
+        categories = req.app.locals.games.map(item => item.category)
+            .filter((value, index, self) => self.indexOf(value) === index).sort();
+    if (settings.remoteServer.filters.theme)
+        themes = req.app.locals.games.map(item => item.theme)
+            .filter((value, index, self) => self.indexOf(value) === index).sort();
+    if (settings.remoteServer.filters.decade)
+        decades = req.app.locals.games.map(item => item.decade)
+            .filter((value, index, self) => self.indexOf(value) === index).sort();
+    if (settings.remoteServer.filters.manufacturer)
+        manufacturers = req.app.locals.games.map(item => item.manufacturer)
+            .filter((value, index, self) => self.indexOf(value) === index).sort();
+    if (settings.remoteServer.filters.emulator)
+        emulators = req.app.locals.games.map(item => item.emulator)
+            .filter((value, index, self) => self.indexOf(value) === index).sort();
+    res.render('index', {
+        games: req.app.locals.games,
+        categories: categories,
+        themes: themes,
+        decades: decades,
+        manufacturers: manufacturers,
+        emulators: emulators
+    });
 });
 
 module.exports = router;

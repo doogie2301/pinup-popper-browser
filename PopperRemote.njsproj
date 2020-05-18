@@ -30,12 +30,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.js" />
-    <Content Include="public\javascripts\bootstrap.min.js" />
+    <Content Include="public\javascripts\bootstrap.bundle.min.js" />
+    <Content Include="public\javascripts\bootstrap.bundle.min.js.map" />
     <Content Include="public\javascripts\jquery-3.5.1.min.js" />
     <Content Include="public\javascripts\main.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\stylesheets\bootstrap.min.css" />
+    <Content Include="public\stylesheets\bootstrap.min.css.map" />
     <Content Include="routes\index.js" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\main.css" />

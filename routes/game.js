@@ -11,7 +11,7 @@ var exitUrl = settings.pupServer.url + "/pupkey/15";
 
 router.get('/:gameId/info', function (req, res) {
     let game = getGame(req.params["gameId"], req);
-    glob(settings.pupServer.mediaDirRoot + "/" + game.emulator + "/GameInfo/" + game.name + "*.{png,jpg}", function (err, files) {
+    glob(settings.pupServer.mediaDirRoot + "/" + game.dirMedia + "/GameInfo/" + game.name + "*.{png,jpg}", function (err, files) {
         let result = [];
         for (file of files) {
             result.push("/media/" + game.dirMedia + "/GameInfo/" + path.basename(file));
@@ -22,7 +22,7 @@ router.get('/:gameId/info', function (req, res) {
 
 router.get('/:gameId/help', function (req, res) {
     let game = getGame(req.params["gameId"], req);
-    glob(settings.pupServer.mediaDirRoot + "/" + game.emulator + "/GameHelp/" + game.name + "*.{png,jpg}", function (err, files) {
+    glob(settings.pupServer.mediaDirRoot + "/" + game.dirMedia + "/GameHelp/" + game.name + "*.{png,jpg}", function (err, files) {
         let result = [];
         for (file of files) {
             result.push("/media/" + game.dirMedia + "/GameHelp/" + path.basename(file));
@@ -33,7 +33,7 @@ router.get('/:gameId/help', function (req, res) {
 
 router.get('/:gameId/playfield', function (req, res) {
     let game = getGame(req.params["gameId"], req);
-    glob(settings.pupServer.mediaDirRoot + "/" + game.emulator + "/Playfield/" + game.name + ".mp4", function (err, files) {
+    glob(settings.pupServer.mediaDirRoot + "/" + game.dirMedia + "/Playfield/" + game.name + ".mp4", function (err, files) {
         let result = [];
         for (file of files) {
             result.push("/media/" + game.dirMedia + "/Playfield/" + path.basename(file));

@@ -3,31 +3,29 @@ extends layout
 block content
 
     nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
-        a.navbar-brand(href='#') #{game.display}
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
             span.navbar-toggler-icon
         div.collapse.navbar-collapse(id='navbarNav')
-            if (info || help || playfield)
-                ul.navbar-nav.nav(id='tabs')
+            ul.navbar-nav.nav(id='tabs')
+                li.nav-item
+                    a.nav-link.navbar-brand(href='#home', data-toggle='tab') #{game.display}
+                if (info)
                     li.nav-item
-                        a.nav-link(href='#home', data-toggle='tab') Home
-                    if (info)
-                        li.nav-item
-                            a.nav-link(href='#info', data-toggle='tab', data-gameid=game.id) Info
-                    if (help)
-                        li.nav-item
-                            a.nav-link(href='#help', data-toggle='tab', data-gameid=game.id) Help
-                    if (playfield)
-                        li.nav-item
-                            a.nav-link(href='#playfield', data-toggle='tab', data-gameid=game.id) Playfield
+                        a.nav-link(href='#info', data-toggle='tab', data-gameid=game.id) Info
+                if (help)
+                    li.nav-item
+                        a.nav-link(href='#help', data-toggle='tab', data-gameid=game.id) Help
+                if (playfield)
+                    li.nav-item
+                        a.nav-link(href='#playfield', data-toggle='tab', data-gameid=game.id) Playfield
     
     div.container-fluid
         div.tab-content
             div.tab-pane.fade(id='home')
                 div.row
-                    div.col-5.mb-3
+                    div.col-sm-3.mb-3
                         image.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
-                    div.col-auto
+                    div.col.ml-3.mb-3
                         h4
                             span.badge.badge-primary Year 
                                 span.badge.badge-light #{game.year}

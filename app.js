@@ -9,6 +9,7 @@ var routeIndex = require('./routes/index');
 var routeGame = require('./routes/game');
 
 var app = express();
+app.disable('x-powered-by');
 
 var games = [];
 var gameIds = new Map();
@@ -19,8 +20,9 @@ const sqlite3 = require('sqlite3').verbose();
 let db = new sqlite3.Database(settings.pupServer.db.path, (err) => {
     if (err) {
         console.error(err.message);
+    } else {
+        debug('Connected to the database.');
     }
-    console.log('Connected to the database.');
 });
 
 
@@ -119,5 +121,5 @@ app.use(function (err, req, res, next) {
 app.set('port', process.env.PORT || settings.httpServer.port);
 
 var server = app.listen(app.get('port'), function () {
-    debug('Express server listening on port ' + server.address().port);
+    console.log('Express server listening on port ' + server.address().port);
 });

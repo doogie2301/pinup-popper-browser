@@ -14,12 +14,14 @@ body {
     transform-origin: bottom left;
     width: auto;
     height: 90vw;
+    max-height: 1000px;
     margin-top: -100vw;
     object-fit: cover;
 }
 
 .carousel img {
     width: 100%;
+    max-width: 1000px;
 }
 
 .tooltip {

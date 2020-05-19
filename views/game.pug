@@ -11,9 +11,9 @@ block content
                 li.nav-item
                     a.nav-link(href='#home', data-toggle='tab') Home
                 li.nav-item
-                    a.nav-link(href='#info', data-toggle='tab') Info
+                    a.nav-link(href='#info', data-toggle='tab', data-gameid=game.id) Info
                 li.nav-item
-                    a.nav-link(href='#help', data-toggle='tab') Help
+                    a.nav-link(href='#help', data-toggle='tab', data-gameid=game.id) Help
                 li.nav-item
                     a.nav-link(href='#media', data-toggle='tab') Media
     
@@ -50,7 +50,23 @@ block content
                         div.mt-2
                             button.btn.btn-secondary(id='btnBack', type='button') Go Back
             div.tab-pane.fade(id='info')
+                div.carousel.slide(id='carouselInfo', data-ride='carousel')
+                    div.carousel-inner
+                    a.carousel-control-prev(href='#carouselInfo', role='button', data-slide='prev')
+                        span.carousel-control-prev-icon(aria-hidden='true')
+                        span.sr-only Previous
+                    a.carousel-control-next(href='#carouselInfo', role='button', data-slide='next')
+                        span.carousel-control-next-icon(aria-hidden='true')
+                        span.sr-only Next
             div.tab-pane.fade(id='help')
+                div.carousel.slide(id='carouselHelp', data-ride='carousel')
+                    div.carousel-inner
+                    a.carousel-control-prev(href='#carouselHelp', role='button', data-slide='prev')
+                        span.carousel-control-prev-icon(aria-hidden='true')
+                        span.sr-only Previous
+                    a.carousel-control-next(href='#carouselHelp', role='button', data-slide='next')
+                        span.carousel-control-next-icon(aria-hidden='true')
+                        span.sr-only Next
             div.tab-pane.fade(id='media')
 
 

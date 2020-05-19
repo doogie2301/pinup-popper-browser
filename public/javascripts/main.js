@@ -3,6 +3,38 @@ $(document).ready(function () {
 
     $("#tabs li:eq(0) a").tab('show');
 
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        let target;
+        if (e.target.text === "Info") {
+            target = 'info';
+        } else if (e.target.text === 'Help') {
+            target = 'help';
+        }
+
+        if (target)
+        {
+            fetch(e.target.getAttribute("data-gameid") + '/' + target)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    $.each(data, function (index, value) {
+                        $('<div class="carousel-item"><img src="' + value + '"></div>').appendTo('#carousel' + e.target.text + ' .carousel-inner');
+                    });
+                    $('#carousel' + e.target.text).carousel('pause');
+                    if (data.length == 1) {
+                        console.log('remove');
+                        $('#carousel' + e.target.text + ' a').remove();
+                    }
+                    $('#carousel' + e.target.text + ' .carousel-item').first().addClass('active');
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+    })
+
     $(document).on('click', '.navbar-collapse.show', function (e) {
         if ($(e.target).is('a:not(".dropdown-toggle")')) {
             $(this).collapse('hide');
@@ -14,7 +46,7 @@ $(document).ready(function () {
     });
 
     $("#btnLaunch").on("click", function () {
-        fetch('/games/' + $(this).data("id") + '?launch')
+        fetch('/games/' + $(this).data("id") + '/launch')
             .then((response) => {
                 response.status != 200 ? showAlert(danger, 'Failed to launch game')
                     : showAlert('success', 'Successfully launched game');

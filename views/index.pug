@@ -21,6 +21,12 @@ block content
                         div.dropdown-menu(aria-labelledby="navbarDropdownTheme")
                             each theme in themes
                                 a.dropdown-item(href="#", data-filter="theme") #{theme}
+                if types
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#", id="navbarDropdownType", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Type
+                        div.dropdown-menu(aria-labelledby="navbarDropdownType")
+                            each type in types
+                                a.dropdown-item(href="#", data-filter="type") #{type}
                 if decades
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(href="#", id="navbarDropdownDecade", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Decade
@@ -46,6 +52,6 @@ block content
     div.container-fluid
         div.row.no-gutters(id='gamesRow')
             each game in games
-                div.col-6.col-md-4.col-lg-2(data-category=game.category, data-theme=game.theme, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator)
+                div.col-6.col-md-4.col-lg-2(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator)
                     a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
                         image.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')

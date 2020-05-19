@@ -6,3 +6,20 @@ body {
     width: 100%;
     transform: rotate(-270deg);
 }
+
+#vidPlayfield {
+    transform: rotate(-270deg);
+    transform-origin: bottom left;
+    width: auto;
+    height: 90vw;
+    margin-top: -100vw;
+    object-fit: cover;
+}
+
+.carousel img {
+    width: 100%;
+}
+
+.tooltip {
+    pointer-events: none;
+}

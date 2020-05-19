@@ -9,29 +9,60 @@ $(document).ready(function () {
             target = 'info';
         } else if (e.target.text === 'Help') {
             target = 'help';
+        } else if (e.target.text === 'Playfield') {
+            target = 'playfield';
         }
 
         if (target)
         {
-            fetch(e.target.getAttribute("data-gameid") + '/' + target)
-                .then(response => {
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
-                    $.each(data, function (index, value) {
-                        $('<div class="carousel-item"><img src="' + value + '"></div>').appendTo('#carousel' + e.target.text + ' .carousel-inner');
+            if (target == "playfield") {
+                if ($("#vidPlayfield").length) {
+                    return;
+                }
+
+                fetch(e.target.getAttribute("data-gameid") + '/' + target)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.length) {
+                            var video = $('<video />', {
+                                id: 'vidPlayfield',
+                                src: data[0],
+                                type: 'video/mp4',
+                                autoplay: true,
+                                loop: true
+                            });
+                            video.appendTo($('#playfield'));
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
                     });
-                    $('#carousel' + e.target.text).carousel('pause');
-                    if (data.length == 1) {
-                        console.log('remove');
-                        $('#carousel' + e.target.text + ' a').remove();
-                    }
-                    $('#carousel' + e.target.text + ' .carousel-item').first().addClass('active');
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+            }
+            else {
+                if ($('#carousel' + e.target.text + ' .carousel-inner').children().length) {
+                    return;
+                }
+
+                fetch(e.target.getAttribute("data-gameid") + '/' + target)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        $.each(data, function (index, value) {
+                            $('<div class="carousel-item"><img src="' + value + '"></div>').appendTo('#carousel' + e.target.text + ' .carousel-inner');
+                        });
+                        $('#carousel' + e.target.text).carousel('pause');
+                        if (data.length == 1) {
+                            $('#carousel' + e.target.text + ' a').remove();
+                        }
+                        $('#carousel' + e.target.text + ' .carousel-item').first().addClass('active');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            }
         }
     })
 

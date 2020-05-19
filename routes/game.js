@@ -31,6 +31,17 @@ router.get('/:gameId/help', function (req, res) {
     })
 });
 
+router.get('/:gameId/playfield', function (req, res) {
+    let game = getGame(req.params["gameId"], req);
+    glob(settings.pupServer.mediaDirRoot + "/" + game.emulator + "/Playfield/" + game.name + ".mp4", function (err, files) {
+        let result = [];
+        for (file of files) {
+            result.push("/media/" + game.dirMedia + "/Playfield/" + path.basename(file));
+        }
+        res.send(result);
+    })
+});
+
 
 router.get('/:gameId/launch', function (req, res) {
     let gameId = req.params["gameId"];
@@ -82,7 +93,12 @@ function getGame(gameId, req) {
 function renderGame(req, res, gameId) {
     let game = getGame(gameId, req);
     if (game) {
-        res.render('game', { game: game });
+        res.render('game', {
+            game: game,
+            info: settings.options.game.info,
+            help: settings.options.game.help,
+            playfield: settings.options.game.playfield
+        });
     } else {
         res.status(404);
         res.send('NOT FOUND');

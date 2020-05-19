@@ -7,15 +7,19 @@ block content
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
             span.navbar-toggler-icon
         div.collapse.navbar-collapse(id='navbarNav')
-            ul.navbar-nav.nav(id='tabs')
-                li.nav-item
-                    a.nav-link(href='#home', data-toggle='tab') Home
-                li.nav-item
-                    a.nav-link(href='#info', data-toggle='tab', data-gameid=game.id) Info
-                li.nav-item
-                    a.nav-link(href='#help', data-toggle='tab', data-gameid=game.id) Help
-                li.nav-item
-                    a.nav-link(href='#media', data-toggle='tab') Media
+            if (info || help || playfield)
+                ul.navbar-nav.nav(id='tabs')
+                    li.nav-item
+                        a.nav-link(href='#home', data-toggle='tab') Home
+                    if (info)
+                        li.nav-item
+                            a.nav-link(href='#info', data-toggle='tab', data-gameid=game.id) Info
+                    if (help)
+                        li.nav-item
+                            a.nav-link(href='#help', data-toggle='tab', data-gameid=game.id) Help
+                    if (playfield)
+                        li.nav-item
+                            a.nav-link(href='#playfield', data-toggle='tab', data-gameid=game.id) Playfield
     
     div.container-fluid
         div.tab-content
@@ -27,6 +31,8 @@ block content
                         h4
                             span.badge.badge-primary Year 
                                 span.badge.badge-light #{game.year}
+                            span.badge.badge-dark.ml-2 Type 
+                                span.badge.badge-light #{game.type}
                         h4
                             span.badge.badge-secondary Manufacturer 
                                 span.badge.badge-light #{game.manufacturer}
@@ -46,9 +52,8 @@ block content
                         div.row
                             div.col-auto
                                 button.btn.btn-primary(id='btnLaunch', type='button', data-id=game.id) Launch Game
+                                button.btn.btn-secondary.ml-2(id='btnBack', type='button') Go Back
                             div.col(id='response')
-                        div.mt-2
-                            button.btn.btn-secondary(id='btnBack', type='button') Go Back
             div.tab-pane.fade(id='info')
                 div.carousel.slide(id='carouselInfo', data-ride='carousel')
                     div.carousel-inner
@@ -67,7 +72,7 @@ block content
                     a.carousel-control-next(href='#carouselHelp', role='button', data-slide='next')
                         span.carousel-control-next-icon(aria-hidden='true')
                         span.sr-only Next
-            div.tab-pane.fade(id='media')
+            div.tab-pane.fade(id='playfield')
 
 
     

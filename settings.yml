@@ -5,14 +5,21 @@ pupServer:
     path: /PinUpSystem/PUPDatabase.db
     filter: ifnull(GameTheme, 1) <> 'Adult'
 	
-remoteServer:
+httpServer:
   port: 3000
+
+options:
   filters:
     category: true
     theme: true
+    type: true
     decade: true
     emulator: true
     manufacturer: false
+  game:
+    info: true
+    help: true
+    playfield: true
 
 
 

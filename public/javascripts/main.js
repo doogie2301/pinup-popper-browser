@@ -108,7 +108,7 @@ $(document).ready(function () {
     $("#gameSearch").on("keyup", function () {
         var value = $(this).val().toLowerCase();
         $("#gamesRow div").filter(function () {
-            $(this).toggle($("a", this).attr("title").toLowerCase().indexOf(value) > -1)
+            $(this).toggle($("a", this).attr("data-original-title").toLowerCase().indexOf(value) > -1)
         });
     });
 });

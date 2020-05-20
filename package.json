@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app",
-    "build": "nexe app.js -r public/ -r views/ -r node_modules/ -r node_modules/sqlite3/lib/binding/node-v72-win32-x64/node_sqlite3.node"
+    "build": "nexe app.js -r public/ -r views/ -r node_modules/"
   },
   "description": "PopperRemote",
   "author": {

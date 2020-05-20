@@ -15,7 +15,7 @@ options:
     type: true
     decade: true
     emulator: true
-    manufacturer: false
+    manufacturer: true
   game:
     info: true
     help: true

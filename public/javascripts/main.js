@@ -77,13 +77,34 @@ $(document).ready(function () {
     });
 
     $("#btnLaunch").on("click", function () {
+        var spinner = $('<span class="spinner-border spinner-border-sm ml-1" role="status" aria-hidden="true"></span>');
+        $(this).append(spinner);
         fetch('/games/' + $(this).data("id") + '/launch')
             .then((response) => {
-                response.status != 200 ? showAlert(danger, 'Failed to launch game')
-                    : showAlert('success', 'Successfully launched game');
+                response.status != 200 ? showAlert(danger, 'Launch request failed')
+                    : showAlert('success', 'Launch request succeeded');
             })
             .catch(() => {
-                showAlert('danger', 'Failed to launch game');
+                showAlert('danger', 'Launch request failed');
+            })
+            .finally(() => {
+                spinner.remove();
+            });
+    });
+
+    $("#btnExit").on("click", function () {
+        var spinner = $('<span class="spinner-border spinner-border-sm ml-1" role="status" aria-hidden="true"></span>');
+        $(this).append(spinner);
+        fetch('/games/exit')
+            .then((response) => {
+                response.status != 200 ? showAlert(danger, 'Exit request failed')
+                    : showAlert('success', 'Exit request succeeded');
+            })
+            .catch(() => {
+                showAlert('danger', 'Exit request failed');
+            })
+            .finally(() => {
+                spinner.remove();
             });
     });
 

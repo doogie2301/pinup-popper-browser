@@ -48,10 +48,15 @@ block content
                                 span.badge.badge-light #{game.lastPlayed ? game.lastPlayed.toLocaleString() : 'Never'}                        
                         hr
                         div.row
-                            div.col-auto
+                            div.col
                                 button.btn.btn-primary(id='btnLaunch', type='button', data-id=game.id) Launch Game
                                 button.btn.btn-secondary.ml-2(id='btnBack', type='button') Go Back
+                        div.row.mt-2
                             div.col(id='response')
+                        div.row.mt-2
+                            div.col
+                                button.btn.btn-primary(id='btnExit', type='button', data-id=game.id) Exit Current Game
+
             div.tab-pane.fade(id='info')
                 div.carousel.slide(id='carouselInfo', data-ride='carousel')
                     div.carousel-inner

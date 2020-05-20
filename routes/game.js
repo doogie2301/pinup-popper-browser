@@ -45,28 +45,31 @@ router.get('/:gameId/playfield', function (req, res) {
 
 router.get('/:gameId/launch', function (req, res) {
     let gameId = req.params["gameId"];
-    // exit emulation first
+        axios.get(launchUrl + gameId).then((response) => {
+            if (response.status != 200) {
+                res.status(500);
+                res.send('ERROR');
+            } else {
+                res.send('OK');
+            }
+        }).catch(() => {
+            res.status(500);
+            res.send('ERROR');
+        })
+});
+
+router.get('/exit', function (req, res) {
     axios.get(exitUrl).then((response) => {
         if (response.status != 200) {
             res.status(500);
             res.send('ERROR');
         } else {
-            axios.get(launchUrl + gameId).then((response) => {
-                if (response.status != 200) {
-                    res.status(500);
-                    res.send('ERROR');
-                } else {
-                    res.send('OK');
-                }
-            }).catch(() => {
-                res.status(500);
-                res.send('ERROR');
-            })
+            res.send('OK');
         }
     }).catch(() => {
         res.status(500);
         res.send('ERROR');
-    });
+    })
 });
 
 router.get('/:gameId', function (req, res) {
@@ -74,8 +77,13 @@ router.get('/:gameId', function (req, res) {
 
     if (gameId == "current") {
         axios.get(getCurItemUrl).then((response) => {
-            gameId = response.data.GameID;
-            renderGame(req, res, gameId);
+            if (response.status != 200) {
+                res.status(500);
+                res.send('ERROR');
+            } else {
+                gameId = response.data.GameID;
+                renderGame(req, res, gameId);
+            }
         }).catch(() => {
             res.status(500);
             res.send('ERROR');

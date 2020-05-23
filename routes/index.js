@@ -31,7 +31,8 @@ router.get('/', function (req, res) {
         themes: themes,
         decades: decades,
         manufacturers: manufacturers,
-        emulators: emulators
+        emulators: emulators,
+        favorites: settings.options.filters.favorites
     });
 });
 

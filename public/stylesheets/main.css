@@ -19,9 +19,16 @@ body {
     object-fit: cover;
 }
 
-.carousel img {
-    width: 100%;
-    max-width: 1000px;
+.favorite {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    height: 16%;
+    width: 16%;
+    background-image: url("/images/favorite.png");
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .tooltip {

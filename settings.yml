@@ -16,6 +16,7 @@ options:
     decade: true
     emulator: true
     manufacturer: true
+    favorites: true
   game:
     info: true
     help: true

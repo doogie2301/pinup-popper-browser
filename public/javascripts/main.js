@@ -120,16 +120,30 @@ $(document).ready(function () {
 
     $("[data-filter]").on("click", function () {
         var type = $(this).data("filter");
-        var value = $(this).text();
+        var value = (type === "fav") ? "1" : $(this).text();
         $("#gamesRow div").filter(function () {
             $(this).toggle($(this).data(type) == value)
         });
+        updateGameCount();
     });
+
+    function updateGameCount() {
+        var cnt = $(".game:visible").length;
+        $("#gameCnt").text(cnt);
+    }
 
     $("#gameSearch").on("keyup", function () {
         var value = $(this).val().toLowerCase();
         $("#gamesRow div").filter(function () {
             $(this).toggle($("a", this).attr("data-original-title").toLowerCase().indexOf(value) > -1)
         });
+        updateGameCount();
     });
+
+    $("#randomSelect").on("click", function () {
+        var games = $(".game:visible");
+        var random = Math.floor(Math.random() * games.length);
+        games.eq(random).find('a')[0].click();
+    });
+
 });

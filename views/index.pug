@@ -7,51 +7,61 @@ block content
             span.navbar-toggler-icon
         div.collapse.navbar-collapse(id='navbarNav')
             ul.navbar-nav.mr-auto
-                li.nav-item
-                    a.nav-link.text-nowrap(href="/games/current") Current Game
+                li.nav-item.dropdown
+                    a.nav-link.dropdown-toggle(href="#", id="navbarDropdownSel", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Game Select
+                    div.dropdown-menu(aria-labelledby="navbarDropdownCat")
+                        a.dropdown-item.text-nowrap(href="/games/current") Current Game
+                        a.dropdown-item.text-nowrap(id="randomSelect", href="#") Random Game
                 if categories
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(href="#", id="navbarDropdownCat", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Category
                         div.dropdown-menu(aria-labelledby="navbarDropdownCat")
                             each category in categories
-                                a.dropdown-item(href="#", data-filter="category") #{category}
+                                a.dropdown-item.text-nowrap(href="#", data-filter="category") #{category}
                 if themes
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(href="#", id="navbarDropdownTheme", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Theme
                         div.dropdown-menu(aria-labelledby="navbarDropdownTheme")
                             each theme in themes
-                                a.dropdown-item(href="#", data-filter="theme") #{theme}
+                                a.dropdown-item.text-nowrap(href="#", data-filter="theme") #{theme}
                 if types
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(href="#", id="navbarDropdownType", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Type
                         div.dropdown-menu(aria-labelledby="navbarDropdownType")
                             each type in types
-                                a.dropdown-item(href="#", data-filter="type") #{type}
+                                a.dropdown-item.text-nowrap(href="#", data-filter="type") #{type}
                 if decades
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(href="#", id="navbarDropdownDecade", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Decade
                         div.dropdown-menu(aria-labelledby="navbarDropdownDecade")
                             each decade in decades
-                                a.dropdown-item(href="#", data-filter="decade") #{decade}
+                                a.dropdown-item.text-nowrap(href="#", data-filter="decade") #{decade}
                 if manufacturers
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(href="#", id="navbarDropdownManufact", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Manufacturer
                         div.dropdown-menu(aria-labelledby="navbarDropdownManufact")
                             each manufact in manufacturers
-                                a.dropdown-item(href="#", data-filter="manufact") #{manufact}
+                                a.dropdown-item.text-nowrap(href="#", data-filter="manufact") #{manufact}
                 if emulators
                     li.nav-item.dropdown
                         a.nav-link.dropdown-toggle(href="#", id="navbarDropdownEmulator", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Emulator
                         div.dropdown-menu(aria-labelledby="navbarDropdownEmulator")
                             each emulator in emulators
-                                a.dropdown-item(href="#", data-filter="emulator") #{emulator}
+                                a.dropdown-item.text-nowrap(href="#", data-filter="emulator") #{emulator}
+                if favorites
+                    li.nav-item
+                        a.nav-link(href="#", data-filter="fav") Favorites
+            span.navbar-text.text-nowrap.ml-sm-0.ml-md-3.mr-1 Count: 
+            span.navbar-text.mr-3(id='gameCnt') #{games.length}
             form.form-inline
-                div.md-form.my-2.my-sm-0
-                    input.formcontrol.mr-sm-2(id='gameSearch', type='search', placeholder='Search', aria-label='Search')
+                div.md-form
+                    input.form-control(id='gameSearch', type='search', placeholder='Search', aria-label='Search')
   
     div.container-fluid
         div.row.no-gutters(id='gamesRow')
             each game in games
-                div.col-6.col-md-4.col-lg-2(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator)
+                div.col-6.col-md-4.col-lg-2.game(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator, data-fav=game.favorite)
                     a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
                         image.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
+                    if game.favorite
+                        i.favorite(title="Favorite")

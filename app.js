@@ -27,8 +27,9 @@ let db = new sqlite3.Database(settings.pupServer.db.path, (err) => {
 
 
 let sql = 'select g.gameid, gamename, gamedisplay, gametype, emudisplay, dirmedia, gameyear, numplayers, manufact, LastPlayed, NumberPlays, TimePlayedSecs, '
-    + 'category, gametheme '
+    + 'category, gametheme, isFav '
     + 'from games g join emulators e on g.emuid = e.emuid '
+    + 'left join (SELECT GameID, 1 as isFav FROM Playlistdetails WHERE isFav > 0 GROUP BY GameID) f on g.gameid = f.gameid '
     + 'left join gamesstats s on g.gameid = s.gameid '
     + (settings.pupServer.db.filter ? ' where ' + settings.pupServer.db.filter : '')
     + 'order by gamedisplay';
@@ -55,7 +56,8 @@ db.all(sql, [], (err, rows) => {
                 lastPlayed: row.LastPlayed,
                 numPlays: row.NumberPlays || 0,
                 timePlayed: row.TimePlayedSecs || 0,
-                decade: row.GameYear ? parseInt(row.GameYear) - (parseInt(row.GameYear) % 10) : ''
+                decade: row.GameYear ? parseInt(row.GameYear) - (parseInt(row.GameYear) % 10) : '',
+                favorite: row.isFav
             });
         gameIds.set(row.GameID, i);
         i++;
@@ -79,9 +81,9 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31536000, immutable: true }));
 
-app.use('/media', express.static(settings.pupServer.mediaDirRoot));
+app.use('/media', express.static(settings.pupServer.mediaDirRoot, { maxAge: 31536000, immutable: true }));
 app.use('/games', routeGame);
 app.use('/', routeIndex);
 

@@ -13,8 +13,7 @@ $(document).ready(function () {
             target = 'playfield';
         }
 
-        if (target)
-        {
+        if (target) {
             if (target == "playfield") {
                 if ($("#vidPlayfield").length) {
                     return;
@@ -114,31 +113,98 @@ $(document).ready(function () {
             '<span aria-hidden="true">&times;</button></div>').hide().appendTo('#response').fadeIn(1000);
 
         $(".alert").delay(3000).fadeOut("normal", function () {
-                $(this).remove();
-            });
+            $(this).remove();
+        });
     }
 
     $("[data-filter]").on("click", function () {
         var type = $(this).data("filter");
         var value = (type === "fav") ? "1" : $(this).text();
+        filter(type, value);
+    });
+
+    function filter(type, value) {
         $("#gamesRow div").filter(function () {
             $(this).toggle($(this).data(type) == value)
         });
         updateGameCount();
+        localStorage.setItem("filterType", type);
+        localStorage.setItem("filterValue", value);
+        $("#gameSearch").val('');
+    }
+
+    if ($("[data-filter]").length > 0 && localStorage.getItem("filterType")) {
+        var type = localStorage.getItem("filterType");
+        var value = localStorage.getItem("filterValue");
+        filter(type, value);
+    }
+
+    $("#clearFilter").on("click", function () {
+        $("#gameSearch").val('');
+        search($("#gameSearch"));
+        $(this).toggle();
+    });
+
+    function checkFilter() {
+        var gameCount = $("#gameCount");
+        $("#clearFilter").toggle(gameCount.data("total") != gameCount.text());
+    }
+
+    var observer = new MutationObserver(function (e) {
+        checkFilter();
+    });
+
+    observer.observe($("#gameCount")[0], {
+        characterData: true,
+        childList: true
     });
 
     function updateGameCount() {
         var cnt = $(".game:visible").length;
-        $("#gameCnt").text(cnt);
+        $("#gameCount").text(cnt);
     }
 
-    $("#gameSearch").on("keyup", function () {
-        var value = $(this).val().toLowerCase();
+    function delay(callback, ms) {
+        var timer = 0;
+        return function () {
+            var context = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                callback.apply(context, args);
+            }, ms || 0);
+        };
+    }
+
+    $('form input').keydown(function (e) {
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    function search(searchbox) {
+        var value = searchbox.val().toLowerCase();
         $("#gamesRow div").filter(function () {
             $(this).toggle($("a", this).attr("data-original-title").toLowerCase().indexOf(value) > -1)
         });
         updateGameCount();
+        localStorage.removeItem("filterType");
+        localStorage.removeItem("filterValue");
+    }
+
+    $("#gameSearch").on("search", function () {
+        search($(this))
     });
+
+    $("#gameSearch").on("keyup", delay(function () {
+        search($(this))
+    }, 400)
+    );
+
+    if ($("#gameSearch").val()) {
+        search($("#gameSearch"));
+    }
+    checkFilter();
 
     $("#randomSelect").on("click", function () {
         var games = $(".game:visible");

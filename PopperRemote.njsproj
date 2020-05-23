@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.js" />
+    <Content Include="public\images\clear-filter.png" />
     <Content Include="public\images\favorite.png" />
     <Content Include="public\javascripts\bootstrap.bundle.min.js" />
     <Content Include="public\javascripts\bootstrap.bundle.min.js.map" />

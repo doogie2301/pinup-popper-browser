@@ -51,10 +51,13 @@ block content
                 if favorites
                     li.nav-item
                         a.nav-link(href="#", data-filter="fav") Favorites
-            span.navbar-text.text-nowrap.ml-sm-0.ml-md-3.mr-1 Count: 
-            span.navbar-text.mr-3(id='gameCnt') #{games.length}
+            div.text-nowrap.ml-0.ml-md-3.mr-3
+                span.navbar-text.mr-1 Count: 
+                span.navbar-text(id='gameCount', data-total=games.length) #{games.length}
+                a.ml-1(id="clearFilter", href="#", title="Clear filter", display="none")
+                    img(src="/images/clear-filter.png", height="24px")
             form.form-inline
-                div.md-form
+                div.md-form.mt-2.mt-md-0
                     input.form-control(id='gameSearch', type='search', placeholder='Search', aria-label='Search')
   
     div.container-fluid
@@ -62,6 +65,6 @@ block content
             each game in games
                 div.col-6.col-md-4.col-lg-2.game(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator, data-fav=game.favorite)
                     a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
-                        image.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
+                        img.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
                     if game.favorite
                         i.favorite(title="Favorite")

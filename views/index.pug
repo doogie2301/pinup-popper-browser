@@ -65,6 +65,6 @@ block content
             each game in games
                 div.col-6.col-md-4.col-lg-2.game(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator, data-fav=game.favorite)
                     a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
-                        img.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
+                        img.wheel.lazyload(src='/images/wheel_load.gif', data-src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
                     if game.favorite
                         i.favorite(title="Favorite")

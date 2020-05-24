@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    lazyload();
+
     $('[data-toggle="tooltip"]').tooltip();
 
     $("#tabs li:eq(0) a").tab('show');
@@ -66,7 +68,7 @@ $(document).ready(function () {
     })
 
     $(document).on('click', '.navbar-collapse.show', function (e) {
-        if ($(e.target).is('a:not(".dropdown-toggle")')) {
+        if ($(e.target).is('a:not(".dropdown-toggle"), img')) {
             $(this).collapse('hide');
         }
     });

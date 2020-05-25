@@ -23,12 +23,12 @@ block content
         div.tab-content
             div.tab-pane.fade(id='home')
                 div.row
-                    div.col-sm-3.mb-3
-                        img.wheel(src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
+                    div.col-sm-5.col-md-4.col-xl-3.mb-3
+                        img.wheel.lazyload(src='/images/wheel_loading.gif', data-src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
                         if game.favorite
                             i.favorite(title="Favorite")
-                    div.col.ml-3.mb-3
-                        h4
+                    div.col
+                        h4.text-nowrap
                             span.badge.badge-primary Year 
                                 span.badge.badge-light #{game.year}
                             span.badge.badge-dark.ml-2 Type 

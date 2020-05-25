@@ -2,7 +2,7 @@ extends layout
 
 block content
 
-    nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
+    nav.navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-dark
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
             span.navbar-toggler-icon
         div.collapse.navbar-collapse(id='navbarNav')
@@ -63,8 +63,8 @@ block content
     div.container-fluid
         div.row.no-gutters(id='gamesRow')
             each game in games
-                div.col-6.col-md-4.col-lg-2.game(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator, data-fav=game.favorite)
+                div.col-6.col-md-4.col-lg-2.m-auto.game(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator, data-fav=game.favorite)
                     a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
-                        img.wheel.lazyload(src='/images/wheel_load.gif', data-src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
+                        img.wheel.img-fluid.lazyload(src='/images/wheel_loading.gif', data-src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
                     if game.favorite
                         i.favorite(title="Favorite")

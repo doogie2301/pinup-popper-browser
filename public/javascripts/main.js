@@ -5,6 +5,10 @@ $(document).ready(function () {
 
     $("#tabs li:eq(0) a").tab('show');
 
+    $('img.wheel').on("error", function () {
+        $(this).attr('src', '/images/wheel_unavailable.png');
+    });
+
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
         let target;
         if (e.target.text === "Info") {
@@ -36,6 +40,9 @@ $(document).ready(function () {
                             });
                             video.appendTo($('#playfield'));
                         }
+                        else {
+                            $('<img id="vidPlayfield" src="/images/wheel_unavailable.png" />').appendTo($('#playfield'));
+                        }
                     })
                     .catch(err => {
                         console.log(err);
@@ -51,6 +58,9 @@ $(document).ready(function () {
                         return response.json();
                     })
                     .then(data => {
+                        if (!data.length) {
+                            data.push("/images/unavailable.png");
+                        }
                         $.each(data, function (index, value) {
                             $('<div class="carousel-item"><img src="' + value + '"></div>').appendTo('#carousel' + e.target.text + ' .carousel-inner');
                         });
@@ -156,10 +166,12 @@ $(document).ready(function () {
         checkFilter();
     });
 
-    observer.observe($("#gameCount")[0], {
-        characterData: true,
-        childList: true
-    });
+    if ($("#gameCount").length > 0) {
+        observer.observe($("#gameCount")[0], {
+            characterData: true,
+            childList: true
+        });
+    }
 
     function updateGameCount() {
         var cnt = $(".game:visible").length;

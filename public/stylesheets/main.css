@@ -4,19 +4,26 @@ body {
 
 .wheel {
     width: 100%;
-    min-width: 10em;
-    max-width: 20em;
     transform: rotate(-270deg);
+}
+
+.tab-content .wheel {
+    min-width: 10em;
 }
 
 #vidPlayfield {
     transform: rotate(-270deg);
     transform-origin: bottom left;
     width: auto;
-    height: 90vw;
-    max-height: 1000px;
+    height: 91vw;
+    max-height: 900px;    
     margin-top: -100vw;
     object-fit: cover;
+}
+
+.carousel-item img {
+    max-width: 100%;
+    max-height: 900px;
 }
 
 .favorite {

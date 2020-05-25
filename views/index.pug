@@ -51,13 +51,13 @@ block content
                 if favorites
                     li.nav-item
                         a.nav-link(href="#", data-filter="fav") Favorites
-            div.text-nowrap.ml-0.ml-md-3.mr-3
+            div.text-nowrap.ml-0.ml-lg-3.mr-3
                 span.navbar-text.mr-1 Count: 
                 span.navbar-text(id='gameCount', data-total=games.length) #{games.length}
                 a.ml-1(id="clearFilter", href="#", title="Clear filter", display="none")
                     img(src="/images/clear-filter.png", height="24px")
             form.form-inline
-                div.md-form.mt-2.mt-md-0
+                div.md-form.mt-1.mt-lg-0
                     input.form-control(id='gameSearch', type='search', placeholder='Search', aria-label='Search')
   
     div.container-fluid

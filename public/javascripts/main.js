@@ -35,6 +35,7 @@ $(document).ready(function () {
                                 id: 'vidPlayfield',
                                 src: data[0],
                                 type: 'video/mp4',
+                                playsinline: true,
                                 autoplay: true,
                                 loop: true
                             });

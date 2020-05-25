@@ -62,11 +62,13 @@ $(document).ready(function () {
                         if (!data.length) {
                             data.push("/images/unavailable.png");
                         }
+                        let i = 0;
                         $.each(data, function (index, value) {
-                            $('<div class="carousel-item"><img src="' + value + '"></div>').appendTo('#carousel' + e.target.text + ' .carousel-inner');
+                            $('<div class="carousel-item"><img ' + ((i == 0) ? '' : 'data-') + 'src="' + value + '"></div>').appendTo('#carousel' + e.target.text + ' .carousel-inner');
+                            i++;
                         });
                         $('#carousel' + e.target.text).carousel('pause');
-                        if (data.length == 1) {
+                        if (i == 1) {
                             $('#carousel' + e.target.text + ' a').remove();
                         }
                         $('#carousel' + e.target.text + ' .carousel-item').first().addClass('active');
@@ -77,6 +79,13 @@ $(document).ready(function () {
             }
         }
     })
+
+    $('.carousel').on('slide.bs.carousel', function (e) {
+        var $upcomingImage = $(e.relatedTarget).find('img');
+        if (typeof $upcomingImage.attr('src') === 'undefined') {
+            $upcomingImage.attr('src', $upcomingImage.data('src'));
+        }
+    });
 
     $(document).on('click', '.navbar-collapse.show', function (e) {
         if ($(e.target).is('a:not(".dropdown-toggle"), img')) {

@@ -22,7 +22,7 @@ router.get('/', function (req, res) {
         manufacturers = req.app.locals.games.map(item => item.manufacturer)
             .filter((value, index, self) => self.indexOf(value) === index).sort();
     if (settings.options.filters.emulator)
-        emulators = req.app.locals.games.map(item => item.emulator)
+        emulators = req.app.locals.games.map(item => item.emulator.name)
             .filter((value, index, self) => self.indexOf(value) === index).sort();
     res.render('index', {
         games: req.app.locals.games,
@@ -32,7 +32,8 @@ router.get('/', function (req, res) {
         decades: decades,
         manufacturers: manufacturers,
         emulators: emulators,
-        favorites: settings.options.filters.favorites
+        favorites: settings.options.filters.favorites,
+        wheelRotation: settings.media.useThumbs ? req.app.locals.globalSettings.thumbRotation : 0
     });
 });
 

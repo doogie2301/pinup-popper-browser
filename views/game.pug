@@ -5,8 +5,8 @@ block content
     nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
             span.navbar-toggler-icon
-        div.collapse.navbar-collapse(id='navbarNav')
-            ul.navbar-nav.nav(id='tabs')
+        #navbarNav.collapse.navbar-collapse
+            ul#tabs.navbar-nav.nav
                 li.nav-item
                     a.nav-link.navbar-brand(href='#home', data-toggle='tab') #{game.display}
                 if (info)
@@ -19,12 +19,12 @@ block content
                     li.nav-item
                         a.nav-link(href='#playfield', data-toggle='tab', data-gameid=game.id) Playfield
     
-    div.container-fluid
+    #game.container-fluid(data-gameid=game.id, data-refresh=refreshInterval)
         div.tab-content
-            div.tab-pane.fade(id='home')
+            #home.tab-pane.fade
                 div.row
                     div.col-sm-5.col-md-4.col-xl-3.mb-3
-                        img.wheel.lazyload(src='/images/wheel_loading.gif', data-src='/media/'+game.dirMedia+'/Wheel/pthumbs/'+game.name+'_thumb.png')
+                        img.wheel.lazyload(class='rotate'+wheelRotation, src='/images/wheel_loading_'+wheelRotation+'.gif', data-src=getWheelSrc(game))
                         if game.favorite
                             i.favorite(title="Favorite")
                     div.col
@@ -41,7 +41,7 @@ block content
                                 span.badge.badge-light #{game.numPlayers}
                         h4
                             span.badge.badge-danger Emulator 
-                                span.badge.badge-light #{game.emulator}                
+                                span.badge.badge-light #{game.emulator.name}                
                         h4
                             span.badge.badge-warning Times Played 
                                 span.badge.badge-light #{game.numPlays || 0}    
@@ -51,16 +51,16 @@ block content
                         hr
                         div.row
                             div.col
-                                button.btn.btn-primary(id='btnLaunch', type='button', data-id=game.id) Launch Game
-                                button.btn.btn-secondary.ml-2(id='btnBack', type='button') Go Back
+                                button#btnLaunch.btn.btn-primary(type='button', data-id=game.id) Launch Game
+                                button#btnBack.btn.btn-secondary.ml-2(type='button') Go Back
                         div.row.mt-2
-                            div.col(id='response')
+                            #response.col
                         div.row.mt-2
                             div.col
-                                button.btn.btn-primary(id='btnExit', type='button', data-id=game.id) Exit Current Game
+                                button#btnExit.btn.btn-primary(type='button', data-id=game.id) Exit Current Game
 
-            div.tab-pane.fade(id='info')
-                div.carousel.slide(id='carouselInfo', data-ride='carousel')
+            #info.tab-pane.fade
+                #carouselInfo.carousel.slide(data-ride='carousel')
                     div.carousel-inner
                     a.carousel-control-prev(href='#carouselInfo', role='button', data-slide='prev')
                         span.carousel-control-prev-icon(aria-hidden='true')
@@ -68,8 +68,8 @@ block content
                     a.carousel-control-next(href='#carouselInfo', role='button', data-slide='next')
                         span.carousel-control-next-icon(aria-hidden='true')
                         span.sr-only Next
-            div.tab-pane.fade(id='help')
-                div.carousel.slide(id='carouselHelp', data-ride='carousel')
+            #help.tab-pane.fade
+                #carouselHelp.carousel.slide(data-ride='carousel')
                     div.carousel-inner
                     a.carousel-control-prev(href='#carouselHelp', role='button', data-slide='prev')
                         span.carousel-control-prev-icon(aria-hidden='true')
@@ -77,7 +77,7 @@ block content
                     a.carousel-control-next(href='#carouselHelp', role='button', data-slide='next')
                         span.carousel-control-next-icon(aria-hidden='true')
                         span.sr-only Next
-            div.tab-pane.fade(id='playfield')
+            #playfield.tab-pane.fade(data-rotate=playfieldRotation)
 
 
     

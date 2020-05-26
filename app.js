@@ -1,6 +1,7 @@
 'use strict';
 var debug = require('debug');
 var express = require('express');
+var favicon = require('serve-favicon');
 var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
@@ -13,55 +14,67 @@ app.disable('x-powered-by');
 
 var games = [];
 var gameIds = new Map();
+var globalSettings = new Object();
+var emulators = new Map();
 
-const sqlite3 = require('sqlite3').verbose();
 
 // open the database
-let db = new sqlite3.Database(settings.pupServer.db.path, (err) => {
-    if (err) {
-        console.error(err.message);
-    } else {
-        debug('Connected to the database.');
-    }
+const db = require('better-sqlite3')(settings.pupServer.db.path, { fileMustExist: true, verbose: debug.log });
+
+// get global settings
+const globalRow = db.prepare("SELECT GlobalMediaDir, ThumbRotate, AttractModeinterval FROM GlobalSettings").get();
+if (globalRow) {
+    globalSettings.defaultMediaDir = globalRow.GlobalMediaDir;
+    globalSettings.thumbRotation = globalRow.ThumbRotate;
+    globalSettings.currentGameRefreshTimer = (globalRow.AttractModeinterval || 0) * 1000;
+} else {
+    console.error("GlobalSettings not found");
+}
+
+
+// get emulators
+const emuRows = db.prepare("SELECT EMUID, EmuDisplay, DirMedia FROM Emulators WHERE Visible").all();
+emuRows.forEach((row) => {
+    emulators.set(row.EMUID,
+        {
+            id: row.EMUID,
+            name: row.EmuDisplay,
+            dirMedia: row.DirMedia || globalSettings.defaultMediaDir
+        });
 });
 
-
-let sql = 'select g.gameid, gamename, gamedisplay, gametype, emudisplay, dirmedia, gameyear, numplayers, manufact, LastPlayed, NumberPlays, TimePlayedSecs, '
+let sql = 'select g.gameid, g.emuID, gamename, gamedisplay, gametype, gameyear, numplayers, manufact, LastPlayed, NumberPlays, TimePlayedSecs, '
     + 'category, gametheme, isFav '
     + 'from games g join emulators e on g.emuid = e.emuid '
     + 'left join (SELECT GameID, 1 as isFav FROM Playlistdetails WHERE isFav > 0 GROUP BY GameID) f on g.gameid = f.gameid '
     + 'left join gamesstats s on g.gameid = s.gameid '
-    + (settings.pupServer.db.filter ? ' where ' + settings.pupServer.db.filter : '')
+    + 'where g.visible and e.visible '
+    + (settings.pupServer.db.filter ? ' and ' + settings.pupServer.db.filter : '')
     + 'order by gamedisplay';
 
-db.all(sql, [], (err, rows) => {
-    if (err) {
-        throw err;
-    }
+const rows = db.prepare(sql).all();
     var i = 0;
-    rows.forEach((row) => {
-        games.push(
-            {
-                id: row.GameID,
-                name: row.GameName,
-                display: row.GameDisplay,
-                type: row.GameType,
-                category: row.Category,
-                theme: row.GameTheme,
-                year: row.GameYear,
-                numPlayers: row.NumPlayers,
-                manufacturer: row.Manufact,
-                emulator: row.EmuDisplay,
-                dirMedia: row.DirMedia.split('\\').pop(),
-                lastPlayed: row.LastPlayed,
-                numPlays: row.NumberPlays || 0,
-                timePlayed: row.TimePlayedSecs || 0,
-                decade: row.GameYear ? parseInt(row.GameYear) - (parseInt(row.GameYear) % 10) : '',
-                favorite: row.isFav
-            });
-        gameIds.set(row.GameID, i);
-        i++;
-    });
+rows.forEach((row) => {
+    games.push(
+        {
+            id: row.GameID,
+            name: row.GameName,
+            display: row.GameDisplay,
+            type: row.GameType,
+            category: row.Category,
+            theme: row.GameTheme,
+            year: row.GameYear,
+            numPlayers: row.NumPlayers,
+            manufacturer: row.Manufact,
+            emulator: emulators.get(row.EMUID),
+            lastPlayed: row.LastPlayed,
+            numPlays: row.NumberPlays || 0,
+            timePlayed: row.TimePlayedSecs || 0,
+            decade: row.GameYear ? parseInt(row.GameYear) - (parseInt(row.GameYear) % 10) : '',
+            favorite: row.isFav
+        });
+    gameIds.set(row.GameID, i);
+    i++;
 });
 
 // close the database connection
@@ -69,21 +82,35 @@ db.close();
 
 app.locals.games = games;
 app.locals.gameIds = gameIds;
+app.locals.globalSettings = globalSettings;
 
+app.locals.getWheelSrc = function (game) {
+    return '/media' + game.emulator.id + '/Wheel/' + (settings.media.useThumbs ? 'pthumbs/' + game.name + '_thumb' : game.name) + '.png';
+};   
 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31536000, immutable: true }));
 
-app.use('/media', express.static(settings.pupServer.mediaDirRoot, { maxAge: 31536000, immutable: true }));
+let cacheOptions = {
+    maxAge: settings.media.cacheInMinutes * 60000,
+    immutable: true
+}
+app.use(express.static(path.join(__dirname, 'public'), cacheOptions));
+
+emulators.forEach(function (value, key) {
+    let dir = '/media' + value.id;
+    let path = value.dirMedia;
+    app.use(dir, express.static(path, cacheOptions));
+    debug.log("Set media path '" + dir + "' to '" + path + "' for emulator '" + value.name + "'");
+});
+
 app.use('/games', routeGame);
 app.use('/', routeIndex);
 

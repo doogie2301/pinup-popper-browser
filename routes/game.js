@@ -11,10 +11,10 @@ var exitUrl = settings.pupServer.url + "/pupkey/15";
 
 router.get('/:gameId/info', function (req, res) {
     let game = getGame(req.params["gameId"], req);
-    glob(settings.pupServer.mediaDirRoot + "/" + game.dirMedia + "/GameInfo/" + game.name + "*.{png,jpg}", function (err, files) {
+    glob(getAbsoluteMediaPath(game) + "/GameInfo/" + game.name + "*.{png,jpg}", function (err, files) {
         let result = [];
         for (file of files) {
-            result.push("/media/" + game.dirMedia + "/GameInfo/" + path.basename(file));
+            result.push(getRelativeMediaPath(game) + "/GameInfo/" + path.basename(file));
         }
         res.send(result);
     })
@@ -22,10 +22,10 @@ router.get('/:gameId/info', function (req, res) {
 
 router.get('/:gameId/help', function (req, res) {
     let game = getGame(req.params["gameId"], req);
-    glob(settings.pupServer.mediaDirRoot + "/" + game.dirMedia + "/GameHelp/" + game.name + "*.{png,jpg}", function (err, files) {
+    glob(getAbsoluteMediaPath(game) + "/GameHelp/" + game.name + "*.{png,jpg}", function (err, files) {
         let result = [];
         for (file of files) {
-            result.push("/media/" + game.dirMedia + "/GameHelp/" + path.basename(file));
+            result.push(getRelativeMediaPath(game) + "/GameHelp/" + path.basename(file));
         }
         res.send(result);
     })
@@ -33,15 +33,14 @@ router.get('/:gameId/help', function (req, res) {
 
 router.get('/:gameId/playfield', function (req, res) {
     let game = getGame(req.params["gameId"], req);
-    glob(settings.pupServer.mediaDirRoot + "/" + game.dirMedia + "/Playfield/" + game.name + ".mp4", function (err, files) {
+    glob(getAbsoluteMediaPath(game) + "/Playfield/" + game.name + "*.{png,jpg,mp4}", function (err, files) {
         let result = [];
         for (file of files) {
-            result.push("/media/" + game.dirMedia + "/Playfield/" + path.basename(file));
+            result.push(getRelativeMediaPath(game) + "/Playfield/" + path.basename(file));
         }
         res.send(result);
     })
 });
-
 
 router.get('/:gameId/launch', function (req, res) {
     let gameId = req.params["gameId"];
@@ -93,6 +92,15 @@ router.get('/:gameId', function (req, res) {
     }
 });
 
+
+function getAbsoluteMediaPath(game) {
+    return game.emulator.dirMedia;
+}
+
+function getRelativeMediaPath(game) {
+    return '/media' + game.emulator.id;
+}
+
 function getGame(gameId, req) {
     let gamePos = req.app.locals.gameIds.get(parseInt(gameId));
     return gamePos === undefined ? gamePos : req.app.locals.games[gamePos];
@@ -105,7 +113,10 @@ function renderGame(req, res, gameId) {
             game: game,
             info: settings.options.game.info,
             help: settings.options.game.help,
-            playfield: settings.options.game.playfield
+            playfield: settings.options.game.playfield,
+            wheelRotation: settings.media.useThumbs ? req.app.locals.globalSettings.thumbRotation : 0,
+            playfieldRotation: settings.media.playfieldRotation,
+            refreshInterval: req.app.locals.globalSettings.currentGameRefreshTimer
         });
     } else {
         res.status(404);

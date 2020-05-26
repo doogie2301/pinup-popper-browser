@@ -6,8 +6,18 @@ $(document).ready(function () {
     $("#tabs li:eq(0) a").tab('show');
 
     $('img.wheel').on("error", function () {
-        $(this).attr('src', '/images/wheel_unavailable.png');
+        $(this).removeClass(function (index, css) {
+            return (css.match(/(^|\s)rotate\S+/g) || []).join(' ');
+        });
+        $(this).attr('src', '/images/unavailable.png');
     });
+
+    if ($(location).attr('href').substring($(location).attr('href').lastIndexOf('/') + 1) === "current") {
+        let refresh = $("#game").data("refresh");
+        if (refresh) {
+            window.setInterval('location.reload();', $("#game").data("refresh"));
+        }
+    }
 
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
         let target;
@@ -21,29 +31,41 @@ $(document).ready(function () {
 
         if (target) {
             if (target == "playfield") {
-                if ($("#vidPlayfield").length) {
+                if ($("#playfield").children().length) {
                     return;
                 }
 
-                fetch(e.target.getAttribute("data-gameid") + '/' + target)
+                fetch($("#game").data("gameid") + '/' + target)
                     .then(response => {
                         return response.json();
                     })
                     .then(data => {
                         if (data.length) {
-                            var video = $('<video />', {
-                                id: 'vidPlayfield',
-                                src: data[0],
-                                type: 'video/mp4',
-                                playsinline: true,
-                                autoplay: true,
-                                loop: true
-                            });
-                            video.appendTo($('#playfield'));
+                            let rotate = $('#playfield').data('rotate') != undefined;
+                            let src = data[0];
+                            var elem;
+                            if (src.endsWith(".png") || src.endsWith(".jpg")) {
+                                elem = $('<img />', {
+                                    class: rotate ? 'playfieldRotate' : 'playfield',
+                                    src: src
+                                })
+
+                            } else {
+                                elem = $('<video />', {
+                                    id: 'vidPlayfield',
+                                    class: rotate ? 'playfieldRotate' : 'playfield',
+                                    src: data[0],
+                                    type: 'video/mp4',
+                                    playsinline: true,
+                                    autoplay: true,
+                                    loop: true
+                                });
+                            }
                         }
                         else {
-                            $('<img id="vidPlayfield" src="/images/wheel_unavailable.png" />').appendTo($('#playfield'));
+                            elem = $('<img src="/images/unavailable.png" />');
                         }
+                        elem.appendTo($('#playfield'));
                     })
                     .catch(err => {
                         console.log(err);
@@ -54,7 +76,7 @@ $(document).ready(function () {
                     return;
                 }
 
-                fetch(e.target.getAttribute("data-gameid") + '/' + target)
+                fetch($("#game").data("gameid") + '/' + target)
                     .then(response => {
                         return response.json();
                     })

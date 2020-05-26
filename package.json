@@ -13,13 +13,14 @@
   "dependencies": {
     "app-settings": "^1.1.0",
     "axios": "^0.19.2",
+    "better-sqlite3": "^7.0.1",
     "body-parser": "^1.15.0",
     "debug": "^2.2.0",
     "express": "^4.14.0",
     "glob": "^7.1.6",
     "morgan": "^1.7.0",
     "pug": "^2.0.0-beta6",
-    "sqlite3": "^4.2.0"
+    "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
     "nexe": "^3.3.2"

@@ -1,8 +1,7 @@
 pupServer:
   url: http://localhost
-  mediaDirRoot: /PinUpSystem/POPMedia
   db:
-    path: /PinUpSystem/PUPDatabase.db
+    path: C:\PinUpSystem\PUPDatabase.db
     filter: ifnull(GameTheme, 1) <> 'Adult'
 	
 httpServer:
@@ -22,5 +21,7 @@ options:
     help: true
     playfield: true
 
-
-
+media:
+  useThumbs: true
+  cacheInMinutes: 20
+  playfieldRotation: false

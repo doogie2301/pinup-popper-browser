@@ -17,9 +17,10 @@ var gameIds = new Map();
 var globalSettings = new Object();
 var emulators = new Map();
 
+const log = debug('popperRemote');
 
 // open the database
-const db = require('better-sqlite3')(settings.pupServer.db.path, { fileMustExist: true });
+const db = require('better-sqlite3')(settings.pupServer.db.path, { fileMustExist: true, verbose: log });
 
 // get global settings
 const globalRow = db.prepare("SELECT GlobalMediaDir, ThumbRotate, AttractModeinterval FROM GlobalSettings").get();
@@ -108,7 +109,7 @@ emulators.forEach(function (value, key) {
     let dir = '/media' + value.id;
     let path = value.dirMedia;
     app.use(dir, express.static(path, cacheOptions));
-    debug.log("Set media path '" + dir + "' to '" + path + "' for emulator '" + value.name + "'");
+    log("Set media path '" + dir + "' to '" + path + "' for emulator '" + value.name + "'");
 });
 
 app.use('/games', routeGame);

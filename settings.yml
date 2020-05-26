@@ -24,4 +24,4 @@ options:
 media:
   useThumbs: true
   cacheInMinutes: 20
-  playfieldRotation: false
+  playfieldRotation: true

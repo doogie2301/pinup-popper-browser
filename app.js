@@ -19,7 +19,7 @@ var emulators = new Map();
 
 
 // open the database
-const db = require('better-sqlite3')(settings.pupServer.db.path, { fileMustExist: true, verbose: debug.log });
+const db = require('better-sqlite3')(settings.pupServer.db.path, { fileMustExist: true });
 
 // get global settings
 const globalRow = db.prepare("SELECT GlobalMediaDir, ThumbRotate, AttractModeinterval FROM GlobalSettings").get();

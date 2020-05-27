@@ -74,7 +74,15 @@ router.get('/exit', function (req, res) {
 router.get('/:gameId', function (req, res) {
     let gameId = req.params["gameId"];
 
-    if (gameId == "current") {
+    if (gameId == "last") {
+        let game = getLastPlayed(req);
+        if (game) {
+            renderGame(req, res, game.id);
+        } else {
+            res.status(404);
+            res.send('NOT FOUND');
+        }
+    } else if (gameId == "current") {
         axios.get(getCurItemUrl).then((response) => {
             if (response.status != 200) {
                 res.status(500);
@@ -92,6 +100,27 @@ router.get('/:gameId', function (req, res) {
     }
 });
 
+function getLastPlayed(req) {
+    let sql = 'SELECT g.GameID, LastPlayed, NumberPlays, TimePlayedSecs '
+        + 'FROM Games g JOIN GamesStats s on g.GameID = s.GameID '
+        + 'ORDER BY LastPlayed DESC LIMIT 1';
+
+    const db = require('better-sqlite3')(settings.pupServer.db.path, { fileMustExist: true });
+    const row = db.prepare(sql).get();
+    db.close();
+
+    if (row) {
+        let game = getGame(row.GameID, req);
+        if (game) {
+            // update with latest stats
+            game.lastPlayed = row.LastPlayed;
+            game.numPlays = row.NumberPlays;
+            game.timePlayed = row.TimePlayedSecs;
+        }
+        return game;
+    }
+    return;
+}
 
 function getAbsoluteMediaPath(game) {
     return game.emulator.dirMedia;

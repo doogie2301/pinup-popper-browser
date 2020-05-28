@@ -3,9 +3,11 @@ pupServer:
   db:
     path: C:\PinUpSystem\PUPDatabase.db
     filter: ifnull(GameTheme, 1) <> 'Adult'
-	
+
 httpServer:
   port: 3000
+  logFormat: dev #combined, common, dev, short, tiny  see https://github.com/expressjs/morgan
+  logLevel: info #info, error
 
 options:
   filters:

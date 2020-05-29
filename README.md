@@ -15,7 +15,7 @@ TBD description
     - **Last Played** - The game that was last played
     - **Random Game** - A randomly selected game
   - **Filters** - The game list can be filtered by one of the available fields (Category, Theme, Type, Decade, Emulator, Manufacturer, and Favorites).
-  - **Search Box** - Filters the games to those with name containing the entered text
+  - **Search Box** - Filters the games by name containing the entered text
 - **Game View** - Displays the details for a single game
   - **Summary** - Disaplays the wheel image and basic information about the game
     - **Launch Game** - Launches the game in Pinup Popper.
@@ -71,9 +71,17 @@ The filtering menu options can be enabled/disabled individually.
 
 The Info, Help, and Playfield menu options can be enabled/disabled individually.
 
-### media.useThumbs
+#### media.useThumbs
 
-Indicates whether to use the thumbnail images created by Pinup Popper for display. Turning this off will load the full original
+Indicates whether to use the thumbnail images created by Pinup Popper for display. Turning this off will load the full sized Wheel media, which may slow the load time and browser responsiveness, but will not require the games to have been viewed in the Pinup Popper menu first.
+
+#### media.cacheInMinutes
+
+The number of minutes the browser should cache the media files.
+
+#### media.playfieldRotation
+
+Indicates whether Playfield media is rotated or not.
 
 ## Links
 

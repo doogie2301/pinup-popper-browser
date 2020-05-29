@@ -5,7 +5,7 @@ var favicon = require("serve-favicon");
 var path = require("path");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
-var settings = require("app-settings");
+var settings = require("config-yml");
 var routeIndex = require("./routes/index");
 var routeGame = require("./routes/game");
 
@@ -180,5 +180,9 @@ app.use(function (err, req, res, next) {
 app.set("port", process.env.PORT || settings.httpServer.port);
 
 var server = app.listen(app.get("port"), function () {
-  console.log("Express server listening on port %i", server.address().port);
+  console.log(
+    "  PinUpBrowser is running at http://localhost:%d",
+    app.get("port")
+  );
+  console.log("  Press CTRL-C to stop\n");
 });

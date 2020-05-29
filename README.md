@@ -2,7 +2,7 @@
 
 > A companion application to [Pinup Popper](http://www.nailbuster.com/wikipinup/) that allows you to browse the available games from another device.
 
-TBD description
+This is an application powered by Node.js with Express to provide a view into your Pinup Popper system from any web browser on your internal network. It works by querying the PuP database to load the details of the games that have been configured, and presents them in a format that can be easily scrolled, filtered, or searched. The selected game can also be launched remotely from the app, which is enabled through the use of the [Web Remote Control for Pinup Popper](http://www.nailbuster.com/wikipinup/doku.php?id=web_remote_control).
 
 [![Build Status](https://travis-ci.org/doogie2301/pinup-popper-browser.svg?branch=master)](https://travis-ci.org/doogie2301/pinup-popper-browser)
 ![Dependencies](https://david-dm.org/doogie2301/pinup-popper-browser.svg)
@@ -29,15 +29,23 @@ TBD description
 ### Prerequisites
 
 - [Enable Web Remote Control for Pinup Popper](http://www.nailbuster.com/wikipinup/doku.php?id=web_remote_control)
-- TBD Update PuPMenuScript for GameLaunch (This is needed for the Current Game function to work properly.)
+- Add the following line of code inside the GameLaunch(pMsg) method inside the PuPMenuScript.pup file (needed for the Current Game feature to work properly):
+  -     if (useWEB && WEBStatus) { PuPWebServer.MenuUpdate(pMsg); }
 
 ### Installation
 
-TBD
+#### Using Node
+
+    npm install
+    node app.js
+
+#### Running without Node
+
+Download and extract the PinUpBrowser.zip file, and run the PinUpBrowser.exe executable.
 
 ### Configuration
 
-The settings.yml file contains settings that can be modified to support your setup and adjust preferences. Changes will take effect after the application is restarted.
+The config.yml file contains settings that can be modified to support your setup and adjust preferences. Changes will take effect after the application is restarted.
 
 #### pupServer.url
 

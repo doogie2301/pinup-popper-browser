@@ -1,5 +1,5 @@
 var express = require("express");
-var settings = require("app-settings");
+var settings = require("config-yml");
 var router = express.Router();
 const axios = require("axios");
 var glob = require("glob");

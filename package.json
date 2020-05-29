@@ -1,14 +1,16 @@
 {
-  "name": "popper-remote",
-  "version": "0.0.0",
+  "name": "pinup-popper-browser",
+  "version": "0.1.0",
+  "license": "GPL-3.0",
+  "description": "An app for browsing your Pinup Popper games",
   "private": true,
+  "main": "app.js",
   "scripts": {
     "start": "node app",
     "build": "nexe app.js -r public/ -r views/ -r node_modules/"
   },
-  "description": "PopperRemote",
   "author": {
-    "name": ""
+    "name": "Matt Sokol"
   },
   "dependencies": {
     "app-settings": "^1.1.0",
@@ -24,5 +26,13 @@
   },
   "devDependencies": {
     "nexe": "^3.3.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/doogie2301/pinup-popper-browser"
+  },
+  "homepage": "https://github.com/doogie2301/pinup-popper-browser",
+  "bugs": {
+    "url": "https://github.com/doogie2301/pinup-popper-browser/issues"
   }
 }

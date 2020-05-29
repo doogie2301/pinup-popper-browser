@@ -181,5 +181,4 @@ app.set("port", process.env.PORT || settings.httpServer.port);
 
 var server = app.listen(app.get("port"), function () {
   console.log("Express server listening on port %i", server.address().port);
-  httpLogger("test2");
 });

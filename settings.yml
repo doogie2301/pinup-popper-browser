@@ -6,8 +6,8 @@ pupServer:
 
 httpServer:
   port: 3000
-  logFormat: dev #combined, common, dev, short, tiny  see https://github.com/expressjs/morgan
-  logLevel: info #info, error
+  logFormat: dev
+  logLevel: error
 
 options:
   filters:

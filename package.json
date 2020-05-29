@@ -6,10 +6,13 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-    "start": "node app",
-    "build": "nexe app.js -r public/ -r views/ -r node_modules/"
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@types/better-sqlite3": "^5.4.0",
     "app-settings": "^1.1.0",
     "axios": "^0.19.2",
     "better-sqlite3": "^7.0.1",
@@ -18,11 +21,20 @@
     "express": "^4.14.0",
     "glob": "^7.1.6",
     "morgan": "^1.7.0",
+    "node-config": "0.0.2",
     "pug": "^2.0.0-beta6",
     "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
-    "nexe": "^3.3.2"
+    "@types/config": "0.0.36",
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.6",
+    "@types/morgan": "^1.9.0",
+    "@types/node": "^14.0.5",
+    "@types/serve-favicon": "^2.5.0",
+    "eslint": "^7.1.0",
+    "nexe": "^3.3.2",
+    "typescript": "^3.9.3"
   },
   "repository": {
     "type": "git",

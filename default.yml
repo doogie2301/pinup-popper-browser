@@ -1,0 +1,29 @@
+pupServer:
+  url: http://localhost
+  db:
+    path: C:\PinUpPopper\PUPDatabase.db
+    filter: ifnull(GameTheme, 1) <> 'Adult'
+
+httpServer:
+  port: 3000
+  logFormat: dev
+  logLevel: error
+
+options:
+  filters:
+    category: true
+    theme: true
+    type: true
+    decade: true
+    emulator: true
+    manufacturer: true
+    favorites: true
+  game:
+    info: true
+    help: true
+    playfield: true
+
+media:
+  useThumbs: true
+  cacheInMinutes: 20
+  playfieldRotation: true

@@ -4,6 +4,7 @@
 
 TBD description
 
+[![Build Status](https://travis-ci.org/doogie2301/pinup-popper-browser.svg?branch=master)](https://travis-ci.org/doogie2301/pinup-popper-browser)
 ![Dependencies](https://david-dm.org/doogie2301/pinup-popper-browser.svg)
 
 ## Features

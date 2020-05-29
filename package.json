@@ -9,9 +9,6 @@
     "start": "node app",
     "build": "nexe app.js -r public/ -r views/ -r node_modules/"
   },
-  "author": {
-    "name": "Matt Sokol"
-  },
   "dependencies": {
     "app-settings": "^1.1.0",
     "axios": "^0.19.2",

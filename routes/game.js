@@ -11,51 +11,15 @@ var launchUrl = settings.pupServer.url + "/function/launchgame/";
 var exitUrl = settings.pupServer.url + "/pupkey/15";
 
 router.get("/:gameId/info", function (req, res) {
-  let game = getGame(req.params["gameId"], req);
-  glob(
-    getAbsoluteMediaPath(game) + "/GameInfo/" + game.name + "*.{png,jpg}",
-    function (err, files) {
-      let result = [];
-      for (file of files) {
-        result.push(
-          getRelativeMediaPath(game) + "/GameInfo/" + path.basename(file)
-        );
-      }
-      res.send(result);
-    }
-  );
+  getMediaFilenames(req, res, "GameInfo", ["png", "jpg"]);
 });
 
 router.get("/:gameId/help", function (req, res) {
-  let game = getGame(req.params["gameId"], req);
-  glob(
-    getAbsoluteMediaPath(game) + "/GameHelp/" + game.name + "*.{png,jpg}",
-    function (err, files) {
-      let result = [];
-      for (file of files) {
-        result.push(
-          getRelativeMediaPath(game) + "/GameHelp/" + path.basename(file)
-        );
-      }
-      res.send(result);
-    }
-  );
+  getMediaFilenames(req, res, "GameHelp", ["png", "jpg"]);
 });
 
 router.get("/:gameId/playfield", function (req, res) {
-  let game = getGame(req.params["gameId"], req);
-  glob(
-    getAbsoluteMediaPath(game) + "/Playfield/" + game.name + "*.{png,jpg,mp4}",
-    function (err, files) {
-      let result = [];
-      for (file of files) {
-        result.push(
-          getRelativeMediaPath(game) + "/Playfield/" + path.basename(file)
-        );
-      }
-      res.send(result);
-    }
-  );
+  getMediaFilenames(req, res, "Playfield", ["png", "jpg", "mp4"]);
 });
 
 router.get("/:gameId/launch", function (req, res) {
@@ -76,7 +40,7 @@ router.get("/:gameId/launch", function (req, res) {
     });
 });
 
-router.get("/exit", function (req, res) {
+router.get("/exit", function (_req, res) {
   axios
     .get(exitUrl)
     .then((response) => {
@@ -101,24 +65,21 @@ router.get("/:gameId", function (req, res) {
     if (game) {
       renderGame(req, res, game.id);
     } else {
-      res.status(404);
-      res.send("NOT FOUND");
+      renderGameError(req, res, "Unable to determine last played game");
     }
   } else if (gameId == "current") {
     axios
       .get(getCurItemUrl)
       .then((response) => {
         if (response.status != 200) {
-          res.status(500);
-          res.send("ERROR");
+          renderGameError(req, res, "Unable to determine current game");
         } else {
           gameId = response.data.GameID;
           renderGame(req, res, gameId);
         }
       })
       .catch(() => {
-        res.status(500);
-        res.send("ERROR");
+        renderGameError(req, res, "Unable to determine current game");
       });
   } else {
     renderGame(req, res, gameId);
@@ -156,12 +117,18 @@ function getAbsoluteMediaPath(game) {
 }
 
 function getRelativeMediaPath(game) {
-  return "/media" + game.emulator.id;
+  return "/media_" + game.emulator.id;
 }
 
 function getGame(gameId, req) {
   let gamePos = req.app.locals.gameIds.get(parseInt(gameId));
   return gamePos === undefined ? gamePos : req.app.locals.games[gamePos];
+}
+
+function renderGameError(_req, res, msg) {
+  res.render("game_error", {
+    message: msg,
+  });
 }
 
 function renderGame(req, res, gameId) {
@@ -179,9 +146,24 @@ function renderGame(req, res, gameId) {
       refreshInterval: req.app.locals.globalSettings.currentGameRefreshTimer,
     });
   } else {
-    res.status(404);
-    res.send("NOT FOUND");
+    renderGameError(req, res, "Game not found");
   }
+}
+
+function getMediaFilenames(req, res, mediaDir, extensions) {
+  let game = getGame(req.params["gameId"], req);
+  let dir = "/" + mediaDir + "/";
+  let ext = "*.{" + extensions.join(",") + "}";
+  glob(getAbsoluteMediaPath(game) + dir + game.name + ext, function (
+    _err,
+    files
+  ) {
+    let result = [];
+    for (file of files) {
+      result.push(getRelativeMediaPath(game) + dir + path.basename(file));
+    }
+    res.send(result);
+  });
 }
 
 module.exports = router;

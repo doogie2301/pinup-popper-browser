@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  nav.navbar.fixed-top.navbar-dark.bg-dark
+    ul.navbar-nav.nav
+      li.nav-item
+        a.nav-link.navbar-brand(href='#')
+  #game.container-fluid
+    div.row
+      div.col-sm-5.col-md-4.col-xl-3.mb-3
+        img.wheel(src='/images/unavailable.png', alt='Unavailable')
+      div.col
+        div.alert.alert-danger(role='alert') #{message}
+        div.row
+          div.col
+            button#btnBack.btn.btn-secondary(type='button') Go Back

@@ -2,70 +2,70 @@ extends layout
 
 block content
 
-    nav.navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-dark
-        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
-            span.navbar-toggler-icon
-        div.collapse.navbar-collapse(id='navbarNav')
-            ul.navbar-nav.mr-auto
-                li.nav-item.dropdown
-                    a#navbarDropdownSel.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Game Select
-                    div.dropdown-menu(aria-labelledby="navbarDropdownCat")
-                        a.dropdown-item.text-nowrap(href="/games/current") Current Game
-                        a.dropdown-item.text-nowrap(href="/games/last") Last Played
-                        a.dropdown-item.text-nowrap(id="randomSelect", href="#") Random Game
-                if categories
-                    li.nav-item.dropdown
-                        a#navbarDropdownCat.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Category
-                        div.dropdown-menu(aria-labelledby="navbarDropdownCat")
-                            each category in categories
-                                a.dropdown-item.text-nowrap(href="#", data-filter="category") #{category}
-                if themes
-                    li.nav-item.dropdown
-                        a#navbarDropdownTheme.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Theme
-                        div.dropdown-menu(aria-labelledby="navbarDropdownTheme")
-                            each theme in themes
-                                a.dropdown-item.text-nowrap(href="#", data-filter="theme") #{theme}
-                if types
-                    li.nav-item.dropdown
-                        a#navbarDropdownType.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Type
-                        div.dropdown-menu(aria-labelledby="navbarDropdownType")
-                            each type in types
-                                a.dropdown-item.text-nowrap(href="#", data-filter="type") #{type}
-                if decades
-                    li.nav-item.dropdown
-                        a#navbarDropdownDecade.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Decade
-                        div.dropdown-menu(aria-labelledby="navbarDropdownDecade")
-                            each decade in decades
-                                a.dropdown-item.text-nowrap(href="#", data-filter="decade") #{decade}
-                if manufacturers
-                    li.nav-item.dropdown
-                        a#navbarDropdownManufact.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Manufacturer
-                        div.dropdown-menu(aria-labelledby="navbarDropdownManufact")
-                            each manufact in manufacturers
-                                a.dropdown-item.text-nowrap(href="#", data-filter="manufact") #{manufact}
-                if emulators
-                    li.nav-item.dropdown
-                        a#navbarDropdownEmulator.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Emulator
-                        div.dropdown-menu(aria-labelledby="navbarDropdownEmulator")
-                            each emulator in emulators
-                                a.dropdown-item.text-nowrap(href="#", data-filter="emulator") #{emulator}
-                if favorites
-                    li.nav-item
-                        a.nav-link(href="#", data-filter="fav") Favorites
-            div.text-nowrap.ml-0.ml-lg-3.mr-3
-                span.navbar-text.mr-1 Count: 
-                span#gameCount.navbar-text(data-total=games.length) #{games.length}
-                a#clearFilter.ml-1(href="#", title="Clear filter", display="none")
-                    img(src="/images/clear-filter.png", height="24px")
-            form.form-inline
-                div.md-form.mt-1.mt-lg-0
-                    input#gameSearch.form-control(type='search', placeholder='Search', aria-label='Search')
-  
-    div.container-fluid
-        #gamesRow.row.no-gutters
-            each game in games
-                div.col-6.col-md-4.col-lg-2.m-auto.game(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator.name, data-fav=game.favorite)
-                    a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
-                        img.wheel.img-fluid.lazyload(class='rotate'+wheelRotation, src='/images/wheel_loading_'+wheelRotation+'.gif', data-src=getWheelSrc(game))
-                    if game.favorite
-                        i.favorite(title="Favorite")
+  nav.navbar.navbar-expand-lg.fixed-top.navbar-dark.bg-dark
+    button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+      span.navbar-toggler-icon
+    div.collapse.navbar-collapse(id='navbarNav')
+      ul.navbar-nav.mr-auto
+        li.nav-item.dropdown
+          a#navbarDropdownSel.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Game Select
+          div.dropdown-menu(aria-labelledby="navbarDropdownCat")
+            a.dropdown-item.text-nowrap(href="/games/current") Current Game
+            a.dropdown-item.text-nowrap(href="/games/last") Last Played
+            a.dropdown-item.text-nowrap(id="randomSelect", href="#") Random Game
+        if categories
+          li.nav-item.dropdown
+            a#navbarDropdownCat.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Category
+            div.dropdown-menu(aria-labelledby="navbarDropdownCat")
+              each category in categories
+                a.dropdown-item.text-nowrap(href="#", data-filter="category") #{category}
+        if themes
+          li.nav-item.dropdown
+            a#navbarDropdownTheme.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Theme
+            div.dropdown-menu(aria-labelledby="navbarDropdownTheme")
+              each theme in themes
+                a.dropdown-item.text-nowrap(href="#", data-filter="theme") #{theme}
+        if types
+          li.nav-item.dropdown
+            a#navbarDropdownType.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Type
+            div.dropdown-menu(aria-labelledby="navbarDropdownType")
+              each gametype in types
+                a.dropdown-item.text-nowrap(href="#", data-filter="type") #{gametype}
+        if decades
+          li.nav-item.dropdown
+            a#navbarDropdownDecade.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Decade
+            div.dropdown-menu(aria-labelledby="navbarDropdownDecade")
+              each decade in decades
+                a.dropdown-item.text-nowrap(href="#", data-filter="decade") #{decade}
+        if manufacturers
+          li.nav-item.dropdown
+            a#navbarDropdownManufact.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Manufacturer
+            div.dropdown-menu(aria-labelledby="navbarDropdownManufact")
+              each manufact in manufacturers
+                a.dropdown-item.text-nowrap(href="#", data-filter="manufact") #{manufact}
+        if emulators
+          li.nav-item.dropdown
+            a#navbarDropdownEmulator.nav-link.dropdown-toggle(href="#", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Emulator
+            div.dropdown-menu(aria-labelledby="navbarDropdownEmulator")
+              each emulator in emulators
+                a.dropdown-item.text-nowrap(href="#", data-filter="emulator") #{emulator}
+        if favorites
+          li.nav-item
+            a.nav-link(href="#", data-filter="fav") Favorites
+      div.text-nowrap.ml-0.ml-lg-3.mr-3
+        span.navbar-text.mr-1 Count: 
+        span#gameCount.navbar-text(data-total=games.length) #{games.length}
+        a#clearFilter.ml-1(href="#", title="Clear filter", display="none")
+          img(src="/images/clear-filter.png", height="24px")
+      form.form-inline
+        div.md-form.mt-1.mt-lg-0
+          input#gameSearch.form-control(type='search', placeholder='Search', aria-label='Search')
+
+  div.container-fluid
+    #gamesRow.row.no-gutters
+      each game in games
+        div.col-6.col-md-4.col-lg-2.m-auto.game(data-category=game.category, data-theme=game.theme, data-type=game.type, data-decade=game.decade, data-manufact=game.manufacturer, data-emulator=game.emulator.name, data-fav=game.favorite)
+          a(href='/games/'+game.id, title=game.display, data-toggle='tooltip')
+            img.wheel.img-fluid.lazyload(class='rotate'+wheelRotation, src='/images/wheel_loading_'+wheelRotation+'.gif', data-src=getWheelSrc(game))
+          if game.favorite
+            i.favorite(title="Favorite")

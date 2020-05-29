@@ -1,83 +1,81 @@
 extends layout
 
 block content
+  nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
+    button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+      span.navbar-toggler-icon
+    #navbarNav.collapse.navbar-collapse
+      ul#tabs.navbar-nav.nav
+        li.nav-item
+          a.nav-link.navbar-brand(href='#home', data-toggle='tab') #{game.display}
+        if (info)
+          li.nav-item
+            a.nav-link(href='#info', data-toggle='tab', data-gameid=game.id) Info
+        if (help)
+          li.nav-item
+            a.nav-link(href='#help', data-toggle='tab', data-gameid=game.id) Help
+        if (playfield)
+          li.nav-item
+            a.nav-link(href='#playfield', data-toggle='tab', data-gameid=game.id) Playfield
 
-    nav.navbar.navbar-expand-md.fixed-top.navbar-dark.bg-dark
-        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
-            span.navbar-toggler-icon
-        #navbarNav.collapse.navbar-collapse
-            ul#tabs.navbar-nav.nav
-                li.nav-item
-                    a.nav-link.navbar-brand(href='#home', data-toggle='tab') #{game.display}
-                if (info)
-                    li.nav-item
-                        a.nav-link(href='#info', data-toggle='tab', data-gameid=game.id) Info
-                if (help)
-                    li.nav-item
-                        a.nav-link(href='#help', data-toggle='tab', data-gameid=game.id) Help
-                if (playfield)
-                    li.nav-item
-                        a.nav-link(href='#playfield', data-toggle='tab', data-gameid=game.id) Playfield
-    
-    #game.container-fluid(data-gameid=game.id, data-refresh=refreshInterval)
-        div.tab-content
-            #home.tab-pane.fade
-                div.row
-                    div.col-sm-5.col-md-4.col-xl-3.mb-3
-                        img.wheel.lazyload(class='rotate'+wheelRotation, src='/images/wheel_loading_'+wheelRotation+'.gif', data-src=getWheelSrc(game))
-                        if game.favorite
-                            i.favorite(title="Favorite")
-                    div.col
-                        h4.text-nowrap
-                            span.badge.badge-primary Year 
-                                span.badge.badge-light #{game.year}
-                            span.badge.badge-dark.ml-2 Type 
-                                span.badge.badge-light #{game.type}
-                        h4
-                            span.badge.badge-secondary Manufacturer 
-                                span.badge.badge-light #{game.manufacturer}
-                        h4
-                            span.badge.badge-success Number of Players 
-                                span.badge.badge-light #{game.numPlayers}
-                        h4
-                            span.badge.badge-danger Emulator 
-                                span.badge.badge-light #{game.emulator.name}                
-                        h4
-                            span.badge.badge-warning Times Played 
-                                span.badge.badge-light #{game.numPlays || 0}    
-                        h4
-                            span.badge.badge-info Last Played 
-                                span.badge.badge-light #{game.lastPlayed ? game.lastPlayed.toLocaleString() : 'Never'}                        
-                        hr
-                        div.row
-                            div.col
-                                button#btnLaunch.btn.btn-primary(type='button', data-id=game.id) Launch Game
-                                button#btnBack.btn.btn-secondary.ml-2(type='button') Go Back
-                        div.row.mt-2
-                            #response.col
-                        div.row.mt-2
-                            div.col
-                                button#btnExit.btn.btn-primary(type='button', data-id=game.id) Exit Current Game
+  #game.container-fluid(data-gameid=game.id, data-refresh=refreshInterval)
+    div.tab-content
+      #home.tab-pane.fade
+        div.row
+          div.col-sm-5.col-md-4.col-xl-3.mb-3
+            img.wheel.lazyload(class='rotate'+wheelRotation, src='/images/wheel_loading_'+wheelRotation+'.gif', data-src=getWheelSrc(game))
+            if game.favorite
+              i.favorite(title="Favorite")
+          div.col
+            h4.text-nowrap
+              span.badge.badge-primary Year 
+                span.badge.badge-light #{game.year}
+              span.badge.badge-dark.ml-2 Type 
+                span.badge.badge-light #{game.type}
+            h4
+              span.badge.badge-secondary Manufacturer 
+                span.badge.badge-light #{game.manufacturer}
+            h4
+              span.badge.badge-success Number of Players 
+                span.badge.badge-light #{game.numPlayers}
+            h4
+              span.badge.badge-danger Emulator 
+                span.badge.badge-light #{game.emulator.name}                
+            h4
+              span.badge.badge-warning Times Played 
+                span.badge.badge-light #{game.numPlays || 0}    
+            h4
+              span.badge.badge-info Last Played 
+                span.badge.badge-light #{game.lastPlayed ? game.lastPlayed.toLocaleString() : 'Never'}                        
+            hr
+            div.row
+              div.col
+                button#btnLaunch.btn.btn-primary(type='button', data-id=game.id) Launch Game
+                button#btnBack.btn.btn-secondary.ml-2(type='button') Go Back
+            div.row.mt-2
+              #response.col
+            div.row.mt-2
+              div.col
+                button#btnExit.btn.btn-primary(type='button', data-id=game.id) Exit Current Game
 
-            #info.tab-pane.fade
-                #carouselInfo.carousel.slide(data-ride='carousel')
-                    div.carousel-inner
-                    a.carousel-control-prev(href='#carouselInfo', role='button', data-slide='prev')
-                        span.carousel-control-prev-icon(aria-hidden='true')
-                        span.sr-only Previous
-                    a.carousel-control-next(href='#carouselInfo', role='button', data-slide='next')
-                        span.carousel-control-next-icon(aria-hidden='true')
-                        span.sr-only Next
-            #help.tab-pane.fade
-                #carouselHelp.carousel.slide(data-ride='carousel')
-                    div.carousel-inner
-                    a.carousel-control-prev(href='#carouselHelp', role='button', data-slide='prev')
-                        span.carousel-control-prev-icon(aria-hidden='true')
-                        span.sr-only Previous
-                    a.carousel-control-next(href='#carouselHelp', role='button', data-slide='next')
-                        span.carousel-control-next-icon(aria-hidden='true')
-                        span.sr-only Next
-            #playfield.tab-pane.fade(data-rotate=playfieldRotation)
+      #info.tab-pane.fade
+        #carouselInfo.carousel.slide(data-ride='carousel')
+          div.carousel-inner
+          a.carousel-control-prev(href='#carouselInfo', role='button', data-slide='prev')
+            span.carousel-control-prev-icon(aria-hidden='true')
+            span.sr-only Previous
+          a.carousel-control-next(href='#carouselInfo', role='button', data-slide='next')
+            span.carousel-control-next-icon(aria-hidden='true')
+            span.sr-only Next
+      #help.tab-pane.fade
+        #carouselHelp.carousel.slide(data-ride='carousel')
+          div.carousel-inner
+          a.carousel-control-prev(href='#carouselHelp', role='button', data-slide='prev')
+            span.carousel-control-prev-icon(aria-hidden='true')
+            span.sr-only Previous
+          a.carousel-control-next(href='#carouselHelp', role='button', data-slide='next')
+            span.carousel-control-next-icon(aria-hidden='true')
+            span.sr-only Next
+      #playfield.tab-pane.fade(data-rotate=playfieldRotation)
 
 
-    

@@ -115,7 +115,11 @@ app.locals.getWheelSrc = function (game) {
   if (settings.media.useThumbs) {
     name = "pthumbs/" + name + "_thumb";
   }
-  return "/media_" + game.emulator.id + "/Wheel/" + name + ".png";
+  return app.locals.getMediaPath(game) + "/Wheel/" + name + ".png";
+};
+
+app.locals.getMediaPath = function (game) {
+  return "/media/" + game.emulator.id;
 };
 
 // view engine setup
@@ -132,7 +136,7 @@ let cacheOptions = {
 app.use(express.static(path.join(__dirname, "public"), cacheOptions));
 
 emulators.forEach(function (value, key) {
-  let dir = "/media_" + value.id;
+  let dir = "/media/" + value.id;
   let path = value.dirMedia;
   app.use(dir, express.static(path, cacheOptions));
   debug("app:media")(

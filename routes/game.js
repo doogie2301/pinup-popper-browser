@@ -2,7 +2,7 @@ var express = require("express");
 var settings = require("config-yml");
 var router = express.Router();
 const axios = require("axios");
-var glob = require("glob");
+var glob = require("fast-glob");
 const path = require("path");
 var debug = require("debug");
 
@@ -112,14 +112,6 @@ function getLastPlayed(req) {
   return;
 }
 
-function getAbsoluteMediaPath(game) {
-  return game.emulator.dirMedia;
-}
-
-function getRelativeMediaPath(game) {
-  return "/media_" + game.emulator.id;
-}
-
 function getGame(gameId, req) {
   let gamePos = req.app.locals.gameIds.get(parseInt(gameId));
   return gamePos === undefined ? gamePos : req.app.locals.games[gamePos];
@@ -150,20 +142,32 @@ function renderGame(req, res, gameId) {
   }
 }
 
+function escapeRegExp(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\\s]/g, "\\$&");
+}
+
 function getMediaFilenames(req, res, mediaDir, extensions) {
-  let game = getGame(req.params["gameId"], req);
-  let dir = "/" + mediaDir + "/";
-  let ext = "*.{" + extensions.join(",") + "}";
-  glob(getAbsoluteMediaPath(game) + dir + game.name + ext, function (
-    _err,
-    files
-  ) {
-    let result = [];
-    for (file of files) {
-      result.push(getRelativeMediaPath(game) + dir + path.basename(file));
-    }
-    res.send(result);
-  });
+  const game = getGame(req.params["gameId"], req);
+  const patterns = extensions.map(
+    (ext) => escapeRegExp(game.name) + "*." + ext
+  );
+  const dir = game.emulator.dirMedia.replace(/\\/g, "/") + "/" + mediaDir;
+  const files = glob.sync(patterns, { cwd: glob.escapePath(dir) });
+  debug("app:media")(
+    "Search for '%s' in '%s' found %i files.",
+    patterns.toString(),
+    dir,
+    files.length
+  );
+  let result = [];
+  for (file of files) {
+    result.push(
+      [req.app.locals.getMediaPath(game), mediaDir, path.basename(file)].join(
+        "/"
+      )
+    );
+  }
+  res.send(result);
 }
 
 module.exports = router;

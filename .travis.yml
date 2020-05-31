@@ -12,7 +12,7 @@ before_deploy:
   - mkdir $RELEASE_NAME
   - cp LICENSE $RELEASE_NAME/
   - cp config.yml $RELEASE_NAME/
-  - cp -f node_modules/**/better_sqlite3.node $RELEASE_NAME/
+  - cp **/better_sqlite3.node $RELEASE_NAME/
   - cp $RELEASE_NAME.exe $RELEASE_NAME/
   - zip -r $RELEASE_NAME-$TRAVIS_TAG.zip $RELEASE_NAME
 deploy:

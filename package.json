@@ -7,7 +7,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app",
-    "build": "pkg -t win package.json -o PinUpBrowser"
+    "build": "pkg -t win package.json -o PinUpBrowser --debug"
   },
   "bin": "app.js",
   "pkg": {

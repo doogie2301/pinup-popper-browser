@@ -11,15 +11,15 @@ This is an application powered by Node.js with Express to provide a view into yo
 
 - **Main View** - Displays the Wheel images for all games enabled in the Pinup Popper menu. Clicking on a wheel will go to the Game View for that game.
   - **Game Select** - Jumps to the Game View for a specific game
-    - **Current Game** - The game currently in view in the Pinup Popper menu or the game currently being played.
-    - **Last Played** - The game that was last played
+    - **Current Game\*** - The game currently in view in the Pinup Popper menu or the game currently being played.
+    - **Last Played\*** - The game that was last played
     - **Random Game** - A randomly selected game
   - **Filters** - The game list can be filtered by one of the available fields (Category, Theme, Type, Decade, Emulator, Manufacturer, and Favorites).
   - **Search Box** - Filters the games by name containing the entered text
 - **Game View** - Displays the details for a single game
   - **Summary** - Disaplays the wheel image and basic information about the game
-    - **Launch Game** - Launches the game in Pinup Popper.
-    - **Exit Current Game** - Exits the current game in Pinup Popper.
+    - **Launch Game\*** - Launches the game in Pinup Popper.
+    - **Exit Current Game\*** - Exits the current game in Pinup Popper.
   - **Info** - Displays any images starting with the game display name) from the GameInfo media folder
   - **Help** - Displays any images for the game from the GameHelp media folder
   - **Playfield** - Displays an image or video for the game from the Playfield media folder
@@ -27,6 +27,8 @@ This is an application powered by Node.js with Express to provide a view into yo
 ## Setup
 
 ### Prerequisites
+
+Features with an asterisk above require the following steps:
 
 - [Enable Web Remote Control for Pinup Popper](http://www.nailbuster.com/wikipinup/doku.php?id=web_remote_control)
 - Add the following line of code inside the GameLaunch(pMsg) method inside the PuPMenuScript.pup file (needed for the Current Game feature to work properly):
@@ -36,8 +38,10 @@ This is an application powered by Node.js with Express to provide a view into yo
 
 #### Using Node
 
+If you already have Node installed, you can download the source code and run the following commands:
+
     npm install
-    node app.js
+    node .
 
 #### Running without Node
 

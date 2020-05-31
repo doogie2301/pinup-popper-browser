@@ -7,13 +7,18 @@
   "main": "app.js",
   "scripts": {
     "start": "node app",
-    "build": "pkg -t win package.json -o PinUpBrowser"
+    "build": "npm run package && npm run copydist",
+    "package": "pkg . -o dist/PinUpBrowser.exe",
+    "copydist": "cp -t dist LICENSE README.md config.yml node_modules/better-sqlite3/build/Release/better_sqlite3.node"
   },
   "bin": "app.js",
   "pkg": {
     "assets": [
       "public/**/*",
       "views/**/*"
+    ],
+    "targets": [
+      "win"
     ]
   },
   "dependencies": {

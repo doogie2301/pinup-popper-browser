@@ -2,9 +2,10 @@ extends layout
 
 block content
   nav.navbar.fixed-top.navbar-dark.bg-dark
-    ul.navbar-nav.nav
+    ul.navbar-nav.nav.ml-auto
       li.nav-item
-        a.nav-link.navbar-brand(href='#')
+        a(href='/', title="Home")
+          img(src="/images/home.png", alt="Home", width="35", height="35")
   #game.container-fluid
     div.row
       div.col-sm-5.col-md-4.col-xl-3.mb-3

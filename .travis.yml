@@ -8,20 +8,13 @@ env:
 script:
   - npm run build
 before_deploy:
-  - rm -rf $RELEASE_NAME || exit 0
-  - mkdir $RELEASE_NAME
-  - cp LICENSE $RELEASE_NAME/
-  - cp config.yml $RELEASE_NAME/
-  - cp node_modules/better-sqlite3/build/Release/better_sqlite3.node $RELEASE_NAME/
-  - ls
-  - ls /$RELEASE_NAME
-  - cp $RELEASE_NAME.exe $RELEASE_NAME/
-  - zip -r $RELEASE_NAME-$TRAVIS_TAG.zip $RELEASE_NAME
+  - ls dist
+  - zip -r $RELEASE_NAME-$TRAVIS_TAG.zip dist
 deploy:
   provider: releases
   api_key:
     secure: C3MfrCcgmSuc530TewWVYt3Ot+M2zX+DfM+4JIklsqoX9xqNOfVSQW1fNujKD42ltj6NPRpJf348UNKuDI+K4n9+0nMEGzpmnpGY/WGjaFVujbC7pdTsj4lILnVxJvIByCF+2QR6q5zsvvL68zFq/NkHIXwmrFG8fT0qlZk1XjRR1lfJunLh+WoSvIub9VDAMAtCpblKgmWNVt7L/MmLUMh/DEoV+RVGESsDZS7ZhDLY1F043EUf0PDNGdygg1i27tMPm4xPN3NdEM95+wXI5qxiLbTeb1Y//vBOZU6HzkiqheQaxf8AoK/ldJ3ELyIXqet7xdNbf3a4x7DlipeUME6fbCGNDPdOYhYsyLudZC152o6oarUBlGtdVs7uL470XRGWyzpB9PG3Mr78AN7Q2nZBVLA56PgxM5DsYz1Jmlzm3X68sG15amjs9kWY3xIO9ucgMyWAYcGFv+Ig+HNK9bvhB8fWJydDyB9kxuf8U982twRMU9jBkisoWZ+RRszEricdiXpoUjh9HhgQeb4vGL1Ku/i7s+M+oYFWQcji4tE6M6vFpjdekNBmfF9c5edSYmmsEjW6WfabhTIFn5hYbTJnYur3AocGFecJPqzAzU2TXV7UBvH1JJimC9bI5VWGKszBrDVLKx7RM+aUBqDAzMsrJ3XBvltJrMB7Ls/6P/I=
-  file: $RELEASE_NAME/$RELEASE_NAME-$TRAVIS_TAG.zip
+  file: $RELEASE_NAME-$TRAVIS_TAG.zip
   on:
     repo: doogie2301/pinup-popper-browser
   skip_cleanup: true

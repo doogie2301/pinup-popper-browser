@@ -119,7 +119,9 @@ Bugs reports and enhancement requests can be submitted by [creating an  issue](h
 
 ## Sponsoring
 
-This project is a contribution to the virtual pinball community, and is completely free to use. However, if you still feel the need to show your appreciation for my efforts, you can always <a href="https://www.buymeacoffee.com/doogie2301" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-black.png" alt="Buy Me A Coffee" style="height: 29px !important; vertical-align: middle;" ></a>
+This project is a contribution to the virtual pinball community, and is completely free to use. However, if you still feel the need to show your appreciation for my efforts, you can click the button below:
+
+<a href="https://www.buymeacoffee.com/doogie2301" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-black.png" alt="Buy Me A Coffee" height="35"></a>
 
 ## License
 

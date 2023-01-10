@@ -27,7 +27,7 @@
     "better-sqlite3": "^7.0.1",
     "body-parser": "^1.15.0",
     "config-yml": "^0.10.3",
-    "debug": "^2.2.0",
+    "debug": "^4.3.4",
     "express": "^4.14.0",
     "fast-glob": "^3.2.2",
     "morgan": "^1.7.0",

@@ -25,7 +25,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "better-sqlite3": "^7.0.1",
-    "body-parser": "^1.15.0",
+    "body-parser": "^2.2.1",
     "config-yml": "^0.10.3",
     "debug": "^2.2.0",
     "express": "^4.14.0",

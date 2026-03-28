@@ -1,62 +1,76 @@
 name: CI
 
 on:
-    push:
-        branches:
-            - master
-        tags:
-            - "*"
-    pull_request:
-        branches:
-            - master
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - master
 
 jobs:
-    build:
-        runs-on: windows-latest
+  build:
+    runs-on: windows-latest
+    outputs:
+      zip_name: "${{ steps.versioned_zip.outputs.zip_name }}"
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: lts/*
-                  cache: npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build release bundle
-              run: npm run build
+      - name: Build release bundle
+        run: npm run build
 
-            - name: Upload build artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: PinUpBrowser
-                  path: dist/PinUpBrowser.zip
-                  if-no-files-found: error
+      - name: Set versioned zip filename
+        id: versioned_zip
+        shell: pwsh
+        run: |
+          $packageVersion = (Get-Content package.json | ConvertFrom-Json).version
+          if ('${{ github.ref }}' -like 'refs/tags/*') {
+            $buildVersion = '${{ github.ref_name }}'
+          }
+          else {
+            $buildVersion = "v$packageVersion-build.${{ github.run_number }}"
+          }
 
-    release:
-        if: startsWith(github.ref, 'refs/tags/')
-        needs: build
-        runs-on: windows-latest
-        permissions:
-            contents: write
+          $zipName = "PinUpBrowser-$buildVersion.zip"
+          Rename-Item -Path dist/PinUpBrowser.zip -NewName $zipName
+          "zip_name=$zipName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
-        steps:
-            - name: Download artifact
-              uses: actions/download-artifact@v4
-              with:
-                  name: PinUpBrowser
-                  path: dist
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PinUpBrowser
+          path: dist/${{ steps.versioned_zip.outputs.zip_name }}
+          if-no-files-found: error
 
-            - name: Rename artifact for tag
-              shell: pwsh
-              run: Rename-Item -Path dist/PinUpBrowser.zip -NewName "PinUpBrowser-${{ github.ref_name }}.zip"
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
 
-            - name: Create draft release
-              uses: softprops/action-gh-release@v2
-              with:
-                  draft: true
-                  files: dist/PinUpBrowser-${{ github.ref_name }}.zip
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: PinUpBrowser
+          path: dist
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: dist/${{ needs.build.outputs.zip_name }}

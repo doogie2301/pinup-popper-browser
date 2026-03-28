@@ -15,7 +15,7 @@
     "test:coverage": "jest --coverage",
     "package": "pkg . --targets node18-win-x64 -o dist/PinUpBrowser.exe",
     "copydist": "copyfiles -f LICENSE README.md config.yml dist",
-    "zipdist": "bestzip dist/PinUpBrowser.zip dist/*"
+    "zipdist": "powershell -NoProfile -Command \"if (Test-Path 'dist/PinUpBrowser.zip') { Remove-Item 'dist/PinUpBrowser.zip' -Force }; Push-Location dist; Compress-Archive -Path 'PinUpBrowser.exe','LICENSE','README.md','config.yml' -DestinationPath 'PinUpBrowser.zip' -Force; Pop-Location\""
   },
   "bin": "app.js",
   "pkg": {

@@ -26,7 +26,7 @@ describe("routes/index", () => {
     });
 
     test("GET / renders index with sorted distinct filter values", async () => {
-        jest.doMock("../settings", () => ({
+        const settings = {
             options: {
                 filters: {
                     category: true,
@@ -41,9 +41,10 @@ describe("routes/index", () => {
             media: {
                 useThumbs: true,
             },
-        }));
+        };
 
-        const router = require("../routes/index");
+        const createRouter = require("../routes/index");
+        const router = createRouter(settings);
 
         const app = createTestApp(router, {
             games: [
@@ -92,7 +93,7 @@ describe("routes/index", () => {
     });
 
     test("GET / disables filters and wheel rotation when thumbs are disabled", async () => {
-        jest.doMock("../settings", () => ({
+        const settings = {
             options: {
                 filters: {
                     category: false,
@@ -107,9 +108,10 @@ describe("routes/index", () => {
             media: {
                 useThumbs: false,
             },
-        }));
+        };
 
-        const router = require("../routes/index");
+        const createRouter = require("../routes/index");
+        const router = createRouter(settings);
         const app = createTestApp(router, {
             games: [],
             globalSettings: {

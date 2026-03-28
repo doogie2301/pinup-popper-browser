@@ -52,16 +52,22 @@ function baseLocals() {
 
 describe("routes/game", () => {
     let globSync;
+    let settings;
 
     beforeEach(() => {
         jest.resetModules();
         jest.clearAllMocks();
 
         globSync = jest.fn();
-        jest.doMock("fast-glob", () => ({
-            sync: globSync,
-            escapePath: (value) => value,
+        jest.doMock("node:fs", () => ({
+            globSync,
         }));
+
+        settings = {
+            pupServer: { url: "http://localhost" },
+            options: { game: { info: true, help: true, playfield: true } },
+            media: { useThumbs: true, playfieldRotation: true },
+        };
     });
 
     afterEach(() => {
@@ -69,13 +75,8 @@ describe("routes/game", () => {
     });
 
     test("GET /games/:id renders game details", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const response = await request(app).get("/games/1");
@@ -89,13 +90,8 @@ describe("routes/game", () => {
     });
 
     test("GET /games/:id renders game error for unknown id", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const response = await request(app).get("/games/999");
@@ -106,11 +102,8 @@ describe("routes/game", () => {
     });
 
     test("GET /games/last renders last played game and updates stats", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: false, playfieldRotation: false },
-        }));
+        settings.media.useThumbs = false;
+        settings.media.playfieldRotation = false;
 
         const locals = baseLocals();
         locals.queryRow.mockReturnValue({
@@ -120,7 +113,8 @@ describe("routes/game", () => {
             TimePlayedSecs: 999,
         });
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, locals);
 
         const response = await request(app).get("/games/last");
@@ -134,16 +128,11 @@ describe("routes/game", () => {
     });
 
     test("GET /games/last renders error when no stats row is found", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
         const locals = baseLocals();
         locals.queryRow.mockReturnValue(undefined);
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, locals);
 
         const response = await request(app).get("/games/last");
@@ -156,18 +145,13 @@ describe("routes/game", () => {
     });
 
     test("GET /games/current resolves current game from remote endpoint", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
         global.fetch = jest.fn().mockResolvedValue({
             status: 200,
             json: async () => ({ GameID: 1 }),
         });
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const response = await request(app).get("/games/current");
@@ -180,18 +164,13 @@ describe("routes/game", () => {
     });
 
     test("GET /games/current renders error when remote lookup fails", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
         global.fetch = jest.fn().mockResolvedValue({
             status: 503,
             json: async () => ({ GameID: 1 }),
         });
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const response = await request(app).get("/games/current");
@@ -202,15 +181,10 @@ describe("routes/game", () => {
     });
 
     test("GET /games/:id/launch returns OK when remote launch succeeds", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
         global.fetch = jest.fn().mockResolvedValue({ status: 200 });
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const response = await request(app).get("/games/1/launch");
@@ -223,15 +197,10 @@ describe("routes/game", () => {
     });
 
     test("GET /games/:id/launch returns ERROR when remote launch fails", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
         global.fetch = jest.fn().mockRejectedValue(new Error("network"));
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const response = await request(app).get("/games/1/launch");
@@ -241,18 +210,13 @@ describe("routes/game", () => {
     });
 
     test("GET /games/exit returns OK and ERROR for success/failure", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
         global.fetch = jest
             .fn()
             .mockResolvedValueOnce({ status: 200 })
             .mockResolvedValueOnce({ status: 500 });
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const okResponse = await request(app).get("/games/exit");
@@ -269,17 +233,12 @@ describe("routes/game", () => {
     });
 
     test("GET /games/:id/info and playfield return matching media URLs", async () => {
-        jest.doMock("../settings", () => ({
-            pupServer: { url: "http://localhost" },
-            options: { game: { info: true, help: true, playfield: true } },
-            media: { useThumbs: true, playfieldRotation: true },
-        }));
-
         globSync
             .mockReturnValueOnce(["Attack From Mars one.png", "Attack From Mars 2.jpg"])
             .mockReturnValueOnce(["Attack From Mars trailer.mp4"]);
 
-        const router = require("../routes/game");
+        const createRouter = require("../routes/game");
+        const router = createRouter(settings);
         const app = createGameApp(router, baseLocals());
 
         const infoResponse = await request(app).get("/games/1/info");

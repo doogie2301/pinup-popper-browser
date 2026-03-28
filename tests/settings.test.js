@@ -15,7 +15,7 @@ describe("settings loader", () => {
         jest.clearAllMocks();
     });
 
-    test("loads YAML from PINUP_BROWSER_CONFIG path", () => {
+    test("loads YAML from PINUP_BROWSER_CONFIG path", async () => {
         const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pinup-settings-"));
         const configPath = path.join(tempDir, "custom.yml");
 
@@ -26,13 +26,14 @@ describe("settings loader", () => {
         );
 
         process.env.PINUP_BROWSER_CONFIG = configPath;
-        const settings = require("../settings");
+        const { loadSettings } = require("../settings");
+        const settings = await loadSettings();
 
         expect(settings.httpServer.port).toBe(4321);
         expect(settings.media.useThumbs).toBe(true);
     });
 
-    test("loads YAML from cwd config.yml when env path is not set", () => {
+    test("loads YAML from cwd config.yml when env path is not set", async () => {
         const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pinup-cwd-"));
         process.chdir(tempDir);
 
@@ -43,31 +44,34 @@ describe("settings loader", () => {
         );
 
         delete process.env.PINUP_BROWSER_CONFIG;
-        const settings = require("../settings");
+        const { loadSettings } = require("../settings");
+        const settings = await loadSettings();
 
         expect(settings.httpServer.port).toBe(9999);
         expect(settings.pupServer.url).toBe("http://example");
     });
 
-    test("throws when no config.yml can be located", () => {
-        jest.doMock("fs", () => ({
-            existsSync: jest.fn().mockReturnValue(false),
-            readFileSync: jest.fn(),
+    test("throws when no config.yml can be located", async () => {
+        jest.doMock("node:fs/promises", () => ({
+            access: jest.fn().mockRejectedValue(new Error("missing")),
+            readFile: jest.fn(),
         }));
 
-        expect(() => require("../settings")).toThrow("Unable to locate config.yml");
+        const { loadSettings } = require("../settings");
+        await expect(loadSettings()).rejects.toThrow("Unable to locate config.yml");
     });
 
-    test("throws when YAML does not parse to an object", () => {
-        jest.doMock("fs", () => ({
-            existsSync: jest.fn().mockReturnValue(true),
-            readFileSync: jest.fn().mockReturnValue("- just\n- a\n- list\n"),
+    test("throws when YAML does not parse to an object", async () => {
+        jest.doMock("node:fs/promises", () => ({
+            access: jest.fn().mockResolvedValue(undefined),
+            readFile: jest.fn().mockResolvedValue("- just\n- a\n- list\n"),
         }));
 
         jest.doMock("yaml", () => ({
             parse: jest.fn().mockReturnValue("not-an-object"),
         }));
 
-        expect(() => require("../settings")).toThrow("Invalid YAML configuration");
+        const { loadSettings } = require("../settings");
+        await expect(loadSettings()).rejects.toThrow("Invalid YAML configuration");
     });
 });

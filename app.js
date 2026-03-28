@@ -3,12 +3,12 @@ var debug = require("debug");
 var express = require("express");
 var favicon = require("serve-favicon");
 var path = require("path");
-var fs = require("fs");
+var fsPromises = require("node:fs/promises");
 var logger = require("morgan");
-var settings = require("./settings");
+var loadSettings = require("./settings").loadSettings;
 var initSqlJs = require("sql.js");
-var routeIndex = require("./routes/index");
-var routeGame = require("./routes/game");
+var createRouteIndex = require("./routes/index");
+var createRouteGame = require("./routes/game");
 
 var app = express();
 
@@ -60,11 +60,12 @@ function normalizeDbFilter(filter) {
 
 async function loadDatabase(filePath) {
   const SQL = await initSqlJs();
-  const dbBytes = fs.readFileSync(filePath);
+  const dbBytes = await fsPromises.readFile(filePath);
   return new SQL.Database(dbBytes);
 }
 
 async function start() {
+  const settings = await loadSettings();
   const httpLogger = debug("app:http");
   app.use(
     logger(settings.httpServer.logFormat, {
@@ -168,6 +169,7 @@ async function start() {
   app.locals.games = games;
   app.locals.gameIds = gameIds;
   app.locals.globalSettings = globalSettings;
+  app.locals.settings = settings;
 
   app.locals.getWheelSrc = function (game) {
     let name = game.name;
@@ -206,8 +208,8 @@ async function start() {
     );
   });
 
-  app.use("/games", routeGame);
-  app.use("/", routeIndex);
+  app.use("/games", createRouteGame(settings));
+  app.use("/", createRouteIndex(settings));
 
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {

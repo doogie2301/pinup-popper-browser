@@ -72,21 +72,23 @@ describe("app startup", () => {
         });
 
         jest.doMock("../settings", () => ({
-            httpServer: { logFormat: "dev", logLevel: "error", port: 3030 },
-            pupServer: { db: { path: dbPath, filter: "EMUID = 1" } },
-            media: { useThumbs: true, cacheInMinutes: 5, playfieldRotation: true },
-            options: {
-                filters: {
-                    category: true,
-                    theme: true,
-                    type: true,
-                    decade: true,
-                    emulator: true,
-                    manufacturer: true,
-                    favorites: true,
+            loadSettings: jest.fn(async () => ({
+                httpServer: { logFormat: "dev", logLevel: "error", port: 3030 },
+                pupServer: { db: { path: dbPath, filter: "EMUID = 1" } },
+                media: { useThumbs: true, cacheInMinutes: 5, playfieldRotation: true },
+                options: {
+                    filters: {
+                        category: true,
+                        theme: true,
+                        type: true,
+                        decade: true,
+                        emulator: true,
+                        manufacturer: true,
+                        favorites: true,
+                    },
+                    game: { info: true, help: true, playfield: true },
                 },
-                game: { info: true, help: true, playfield: true },
-            },
+            })),
         }));
 
         const dbClose = jest.fn();
@@ -162,21 +164,23 @@ describe("app startup", () => {
         });
 
         jest.doMock("../settings", () => ({
-            httpServer: { logFormat: "dev", logLevel: "info", port: 4040 },
-            pupServer: { db: { path: dbPath, filter: "" } },
-            media: { useThumbs: false, cacheInMinutes: 1, playfieldRotation: false },
-            options: {
-                filters: {
-                    category: false,
-                    theme: false,
-                    type: false,
-                    decade: false,
-                    emulator: false,
-                    manufacturer: false,
-                    favorites: false,
+            loadSettings: jest.fn(async () => ({
+                httpServer: { logFormat: "dev", logLevel: "info", port: 4040 },
+                pupServer: { db: { path: dbPath, filter: "" } },
+                media: { useThumbs: false, cacheInMinutes: 1, playfieldRotation: false },
+                options: {
+                    filters: {
+                        category: false,
+                        theme: false,
+                        type: false,
+                        decade: false,
+                        emulator: false,
+                        manufacturer: false,
+                        favorites: false,
+                    },
+                    game: { info: false, help: false, playfield: false },
                 },
-                game: { info: false, help: false, playfield: false },
-            },
+            })),
         }));
 
         const dbClose = jest.fn(() => {

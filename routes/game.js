@@ -1,13 +1,14 @@
 var express = require("express");
-var settings = require("../settings");
-var router = express.Router();
-var glob = require("fast-glob");
+var fs = require("node:fs");
 const path = require("path");
 var debug = require("debug");
 
-var getCurItemUrl = settings.pupServer.url + "/function/getcuritem";
-var launchUrl = settings.pupServer.url + "/function/launchgame/";
-var exitUrl = settings.pupServer.url + "/pupkey/15";
+function createRouter(settings) {
+  var router = express.Router();
+
+  var getCurItemUrl = settings.pupServer.url + "/function/getcuritem";
+  var launchUrl = settings.pupServer.url + "/function/launchgame/";
+  var exitUrl = settings.pupServer.url + "/pupkey/15";
 
 async function fetchStatus(url) {
   const response = await fetch(url);
@@ -150,7 +151,7 @@ function getMediaFilenames(req, res, mediaDir, extensions) {
     (ext) => escapeRegExp(game.name) + "*." + ext
   );
   const dir = game.emulator.dirMedia.replace(/\\/g, "/") + "/" + mediaDir;
-  const files = glob.sync(patterns, { cwd: glob.escapePath(dir) });
+  const files = fs.globSync(patterns, { cwd: dir });
   debug("app:media")(
     "Search for '%s' in '%s' found %i files.",
     patterns.toString(),
@@ -158,7 +159,7 @@ function getMediaFilenames(req, res, mediaDir, extensions) {
     files.length
   );
   let result = [];
-  for (file of files) {
+  for (const file of files) {
     result.push(
       [req.app.locals.getMediaPath(game), mediaDir, path.basename(file)].join(
         "/"
@@ -168,4 +169,7 @@ function getMediaFilenames(req, res, mediaDir, extensions) {
   res.send(result);
 }
 
-module.exports = router;
+  return router;
+}
+
+module.exports = createRouter;

@@ -5,7 +5,13 @@
 This is an application powered by Node.js with Express to provide a view into your Pinup Popper system from any web browser on your internal network. It works by querying the PuP database to load the details of the games that have been configured, and presents them in a format that can be easily scrolled, filtered, or searched. The selected game can also be launched remotely from the app, which is enabled through the use of the [Web Remote Control for Pinup Popper](http://www.nailbuster.com/wikipinup/doku.php?id=web_remote_control).
 
 [![Build Status](https://github.com/doogie2301/pinup-popper-browser/actions/workflows/ci.yml/badge.svg)](https://github.com/doogie2301/pinup-popper-browser/actions/workflows/ci.yml)
-![Dependencies](https://img.shields.io/depfu/doogie2301/pinup-popper-browser)
+[![codecov](https://codecov.io/gh/doogie2301/pinup-popper-browser/branch/master/graph/badge.svg)](https://codecov.io/gh/doogie2301/pinup-popper-browser)
+[![Dependabot](https://img.shields.io/github/dependabot-status/doogie2301/pinup-popper-browser?logo=dependabot)](https://github.com/doogie2301/pinup-popper-browser/network/updates)
+
+CI also publishes Jest coverage from each run:
+
+- Download the Actions artifact named **coverage-report** for `lcov.info` and `coverage-final.json`.
+- Coverage is uploaded to Codecov, which powers the README badge above.
 
 ## Features
 
@@ -50,6 +56,8 @@ Features with an asterisk above require the following steps:
 
 #### Using Node
 
+Requires Node.js 18 or newer.
+
 If you already have Node installed, you can download the source code and run the following commands:
 
     npm install
@@ -59,7 +67,7 @@ The advantage to this approach is that you have the ability to customize the cod
 
 #### Running without Node
 
-The application is also packaged as a standalone executable. Simply download and extract the contents of the latest PinUpBrowser.zip file from [the Releases tab](https://github.com/doogie2301/pinup-popper-browser/releases), and run the PinUpBrowser.exe executable.
+The application is also packaged as a standalone executable. This option does not require Node.js to be installed. Simply download and extract the contents of the latest PinUpBrowser.zip file from [the Releases tab](https://github.com/doogie2301/pinup-popper-browser/releases), and run the PinUpBrowser.exe executable.
 
 ### Configuration
 

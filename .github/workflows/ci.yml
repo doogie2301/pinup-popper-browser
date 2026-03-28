@@ -16,6 +16,9 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
     outputs:
       artifact_name: "${{ steps.artifact_meta.outputs.artifact_name }}"
 
@@ -31,6 +34,27 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: |
+            coverage/lcov.info
+            coverage/coverage-final.json
+          if-no-files-found: error
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: github-actions
+          fail_ci_if_error: false
+          use_oidc: true
 
       - name: Build release bundle
         run: npm run build

@@ -10,11 +10,12 @@
   },
   "scripts": {
     "start": "node app",
+    "start:watch": "node --watch app.js",
     "build": "npm run package && npm run copydist && npm run zipdist",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "package": "pkg . --targets node18-win-x64 -o dist/PinUpBrowser.exe",
-    "copydist": "copyfiles -f LICENSE README.md config.yml dist",
+    "package": "pkg . --targets node24-win-x64 -o dist/PinUpBrowser.exe",
+    "copydist": "powershell -NoProfile -Command \"Copy-Item -Path 'LICENSE','README.md','config.yml' -Destination 'dist' -Force\"",
     "zipdist": "powershell -NoProfile -Command \"if (Test-Path 'dist/PinUpBrowser.zip') { Remove-Item 'dist/PinUpBrowser.zip' -Force }; Push-Location dist; Compress-Archive -Path 'PinUpBrowser.exe','LICENSE','README.md','config.yml' -DestinationPath 'PinUpBrowser.zip' -Force; Pop-Location\""
   },
   "bin": "app.js",
@@ -31,7 +32,6 @@
   "dependencies": {
     "debug": "^4.4.3",
     "express": "^5.2.1",
-    "fast-glob": "^3.2.2",
     "morgan": "^1.7.0",
     "pug": "^3.0.4",
     "serve-favicon": "^2.5.0",
@@ -40,8 +40,6 @@
   },
   "devDependencies": {
     "@yao-pkg/pkg": "^6.14.1",
-    "bestzip": "^2.2.1",
-    "copyfiles": "^2.4.1",
     "jest": "^30.3.0",
     "supertest": "^7.2.2"
   },

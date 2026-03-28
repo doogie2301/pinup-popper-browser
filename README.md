@@ -8,11 +8,6 @@ This is an application powered by Node.js with Express to provide a view into yo
 [![codecov](https://codecov.io/gh/doogie2301/pinup-popper-browser/branch/master/graph/badge.svg)](https://codecov.io/gh/doogie2301/pinup-popper-browser)
 [![Dependabot](https://img.shields.io/github/dependabot-status/doogie2301/pinup-popper-browser?logo=dependabot)](https://github.com/doogie2301/pinup-popper-browser/network/updates)
 
-CI also publishes Jest coverage from each run:
-
-- Download the Actions artifact named **coverage-report** for `lcov.info` and `coverage-final.json`.
-- Coverage is uploaded to Codecov, which powers the README badge above.
-
 ## Features
 
 - **Main View** - Displays the Wheel images for all games in the Pinup Popper menu. Clicking on a wheel will go to the Game View for that game.

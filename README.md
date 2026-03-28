@@ -4,7 +4,7 @@
 
 This is an application powered by Node.js with Express to provide a view into your Pinup Popper system from any web browser on your internal network. It works by querying the PuP database to load the details of the games that have been configured, and presents them in a format that can be easily scrolled, filtered, or searched. The selected game can also be launched remotely from the app, which is enabled through the use of the [Web Remote Control for Pinup Popper](http://www.nailbuster.com/wikipinup/doku.php?id=web_remote_control).
 
-[![Build Status](https://img.shields.io/travis/doogie2301/pinup-popper-browser/master)](https://travis-ci.org/doogie2301/pinup-popper-browser)
+[![Build Status](https://github.com/doogie2301/pinup-popper-browser/actions/workflows/ci.yml/badge.svg)](https://github.com/doogie2301/pinup-popper-browser/actions/workflows/ci.yml)
 ![Dependencies](https://img.shields.io/depfu/doogie2301/pinup-popper-browser)
 
 ## Features

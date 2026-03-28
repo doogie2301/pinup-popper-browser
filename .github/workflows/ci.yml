@@ -13,8 +13,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    outputs:
-      zip_name: "${{ steps.versioned_zip.outputs.zip_name }}"
 
     steps:
       - name: Checkout
@@ -32,27 +30,15 @@ jobs:
       - name: Build release bundle
         run: npm run build
 
-      - name: Set versioned zip filename
-        id: versioned_zip
-        shell: pwsh
-        run: |
-          $packageVersion = (Get-Content package.json | ConvertFrom-Json).version
-          if ('${{ github.ref }}' -like 'refs/tags/*') {
-            $buildVersion = '${{ github.ref_name }}'
-          }
-          else {
-            $buildVersion = "v$packageVersion-build.${{ github.run_number }}"
-          }
-
-          $zipName = "PinUpBrowser-$buildVersion.zip"
-          Rename-Item -Path dist/PinUpBrowser.zip -NewName $zipName
-          "zip_name=$zipName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PinUpBrowser
-          path: dist/${{ steps.versioned_zip.outputs.zip_name }}
+          name: PinUpBrowser-files
+          path: |
+            dist/PinUpBrowser.exe
+            dist/LICENSE
+            dist/README.md
+            dist/config.yml
           if-no-files-found: error
 
   release:
@@ -66,11 +52,16 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: PinUpBrowser
+          name: PinUpBrowser-files
           path: dist
+
+      - name: Create tagged release zip
+        shell: pwsh
+        run: |
+          Compress-Archive -Path 'dist/PinUpBrowser.exe','dist/LICENSE','dist/README.md','dist/config.yml' -DestinationPath "dist/PinUpBrowser-${{ github.ref_name }}.zip" -Force
 
       - name: Create draft release
         uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: dist/${{ needs.build.outputs.zip_name }}
+          files: dist/PinUpBrowser-${{ github.ref_name }}.zip

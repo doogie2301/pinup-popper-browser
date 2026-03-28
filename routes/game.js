@@ -1,7 +1,6 @@
 var express = require("express");
-var settings = require("config-yml");
+var settings = require("../settings");
 var router = express.Router();
-const axios = require("axios");
 var glob = require("fast-glob");
 const path = require("path");
 var debug = require("debug");
@@ -9,6 +8,19 @@ var debug = require("debug");
 var getCurItemUrl = settings.pupServer.url + "/function/getcuritem";
 var launchUrl = settings.pupServer.url + "/function/launchgame/";
 var exitUrl = settings.pupServer.url + "/pupkey/15";
+
+async function fetchStatus(url) {
+  const response = await fetch(url);
+  return response.status;
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (response.status !== 200) {
+    throw new Error("Unexpected status: " + response.status);
+  }
+  return response.json();
+}
 
 router.get("/:gameId/info", function (req, res) {
   getMediaFilenames(req, res, "GameInfo", ["png", "jpg"]);
@@ -22,39 +34,35 @@ router.get("/:gameId/playfield", function (req, res) {
   getMediaFilenames(req, res, "Playfield", ["png", "jpg", "mp4"]);
 });
 
-router.get("/:gameId/launch", function (req, res) {
+router.get("/:gameId/launch", async function (req, res) {
   let gameId = req.params["gameId"];
-  axios
-    .get(launchUrl + gameId)
-    .then((response) => {
-      if (response.status != 200) {
-        res.status(500);
-        res.send("ERROR");
-      } else {
-        res.send("OK");
-      }
-    })
-    .catch(() => {
+  try {
+    const status = await fetchStatus(launchUrl + gameId);
+    if (status !== 200) {
       res.status(500);
       res.send("ERROR");
-    });
+      return;
+    }
+    res.send("OK");
+  } catch (_err) {
+    res.status(500);
+    res.send("ERROR");
+  }
 });
 
-router.get("/exit", function (_req, res) {
-  axios
-    .get(exitUrl)
-    .then((response) => {
-      if (response.status != 200) {
-        res.status(500);
-        res.send("ERROR");
-      } else {
-        res.send("OK");
-      }
-    })
-    .catch(() => {
+router.get("/exit", async function (_req, res) {
+  try {
+    const status = await fetchStatus(exitUrl);
+    if (status !== 200) {
       res.status(500);
       res.send("ERROR");
-    });
+      return;
+    }
+    res.send("OK");
+  } catch (_err) {
+    res.status(500);
+    res.send("ERROR");
+  }
 });
 
 router.get("/:gameId", function (req, res) {
@@ -68,15 +76,10 @@ router.get("/:gameId", function (req, res) {
       renderGameError(req, res, "Unable to determine last played game");
     }
   } else if (gameId == "current") {
-    axios
-      .get(getCurItemUrl)
-      .then((response) => {
-        if (response.status != 200) {
-          renderGameError(req, res, "Unable to determine current game");
-        } else {
-          gameId = response.data.GameID;
-          renderGame(req, res, gameId);
-        }
+    fetchJson(getCurItemUrl)
+      .then((data) => {
+        gameId = data.GameID;
+        renderGame(req, res, gameId);
       })
       .catch(() => {
         renderGameError(req, res, "Unable to determine current game");
@@ -92,12 +95,7 @@ function getLastPlayed(req) {
     "FROM Games g JOIN GamesStats s on g.GameID = s.GameID " +
     "ORDER BY LastPlayed DESC LIMIT 1";
 
-  const db = require("better-sqlite3")(settings.pupServer.db.path, {
-    fileMustExist: true,
-    verbose: debug("app:sql"),
-  });
-  const row = db.prepare(sql).get();
-  db.close();
+  const row = req.app.locals.queryRow(sql);
 
   if (row) {
     let game = getGame(row.GameID, req);

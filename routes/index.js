@@ -1,6 +1,6 @@
 "use strict";
 var express = require("express");
-var settings = require("config-yml");
+var settings = require("../settings");
 var router = express.Router();
 
 /* GET home page. */

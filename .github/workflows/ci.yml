@@ -96,7 +96,7 @@ jobs:
           Compress-Archive -Path 'dist/PinUpBrowser.exe','dist/LICENSE','dist/README.md','dist/config.yml' -DestinationPath "dist/PinUpBrowser-${{ github.ref_name }}.zip" -Force
 
       - name: Create draft release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           draft: true
           files: dist/PinUpBrowser-${{ github.ref_name }}.zip

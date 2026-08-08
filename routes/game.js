@@ -1,175 +1,192 @@
 var express = require("express");
-var fs = require("node:fs");
+var settings = require("config-yml");
+var router = express.Router();
+const axios = require("axios");
+var glob = require("fast-glob");
 const path = require("path");
 var debug = require("debug");
 
-function createRouter(settings) {
-  var router = express.Router();
+var getCurItemUrl = settings.pupServer.url + "/function/getcuritem";
+var launchUrl = settings.pupServer.url + "/function/launchgame/";
+var exitUrl = settings.pupServer.url + "/pupkey/15";
 
-  var getCurItemUrl = settings.pupServer.url + "/function/getcuritem";
-  var launchUrl = settings.pupServer.url + "/function/launchgame/";
-  var exitUrl = settings.pupServer.url + "/pupkey/15";
+router.get("/:gameId/info", function (req, res) {
+  getMediaFilenames(req, res, "GameInfo", ["png", "jpg"]);
+});
 
-  async function fetchStatus(url) {
-    const response = await fetch(url);
-    return response.status;
-  }
+router.get("/:gameId/help", function (req, res) {
+  getMediaFilenames(req, res, "GameHelp", ["png", "jpg"]);
+});
 
-  async function fetchJson(url) {
-    const response = await fetch(url);
-    if (response.status !== 200) {
-      throw new Error("Unexpected status: " + response.status);
-    }
-    return response.json();
-  }
+router.get("/:gameId/playfield", function (req, res) {
+  getMediaFilenames(req, res, "Playfield", ["png", "jpg", "mp4"]);
+});
 
-  router.get("/:gameId/info", function (req, res) {
-    getMediaFilenames(req, res, "GameInfo", ["png", "jpg"]);
-  });
+router.get("/:gameId/backglass", function (req, res) {
+  getMediaFilenames(req, res, "Backglass", ["png", "jpg", "mp4"]);
+});
 
-  router.get("/:gameId/help", function (req, res) {
-    getMediaFilenames(req, res, "GameHelp", ["png", "jpg"]);
-  });
-
-  router.get("/:gameId/playfield", function (req, res) {
-    getMediaFilenames(req, res, "Playfield", ["png", "jpg", "mp4"]);
-  });
-
-  router.get("/:gameId/launch", async function (req, res) {
-    let gameId = req.params["gameId"];
-    try {
-      const status = await fetchStatus(launchUrl + gameId);
-      if (status !== 200) {
+router.get("/:gameId/launch", function (req, res) {
+  let gameId = req.params["gameId"];
+  axios
+    .get(launchUrl + gameId)
+    .then((response) => {
+      if (response.status != 200) {
         res.status(500);
         res.send("ERROR");
-        return;
-      }
-      res.send("OK");
-    } catch (_err) {
-      res.status(500);
-      res.send("ERROR");
-    }
-  });
-
-  router.get("/exit", async function (_req, res) {
-    try {
-      const status = await fetchStatus(exitUrl);
-      if (status !== 200) {
-        res.status(500);
-        res.send("ERROR");
-        return;
-      }
-      res.send("OK");
-    } catch (_err) {
-      res.status(500);
-      res.send("ERROR");
-    }
-  });
-
-  router.get("/:gameId", function (req, res) {
-    let gameId = req.params["gameId"];
-
-    if (gameId == "last") {
-      let game = getLastPlayed(req);
-      if (game) {
-        renderGame(req, res, game.id);
       } else {
-        renderGameError(req, res, "Unable to determine last played game");
+        res.send("OK");
       }
-    } else if (gameId == "current") {
-      fetchJson(getCurItemUrl)
-        .then((data) => {
-          gameId = data.GameID;
-          renderGame(req, res, gameId);
-        })
-        .catch(() => {
-          renderGameError(req, res, "Unable to determine current game");
-        });
-    } else {
-      renderGame(req, res, gameId);
-    }
-  });
-
-  function getLastPlayed(req) {
-    let sql =
-      "SELECT g.GameID, LastPlayed, NumberPlays, TimePlayedSecs " +
-      "FROM Games g JOIN GamesStats s on g.GameID = s.GameID " +
-      "ORDER BY LastPlayed DESC LIMIT 1";
-
-    const row = req.app.locals.queryRow(sql);
-
-    if (row) {
-      let game = getGame(row.GameID, req);
-      if (game) {
-        // update with latest stats
-        game.lastPlayed = row.LastPlayed;
-        game.numPlays = row.NumberPlays;
-        game.timePlayed = row.TimePlayedSecs;
-      }
-      return game;
-    }
-    return;
-  }
-
-  function getGame(gameId, req) {
-    let gamePos = req.app.locals.gameIds.get(parseInt(gameId));
-    return gamePos === undefined ? gamePos : req.app.locals.games[gamePos];
-  }
-
-  function renderGameError(_req, res, msg) {
-    res.render("game_error", {
-      message: msg,
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("ERROR");
     });
-  }
+});
 
-  function renderGame(req, res, gameId) {
-    let game = getGame(gameId, req);
+router.get("/exit", function (_req, res) {
+  axios
+    .get(exitUrl)
+    .then((response) => {
+      if (response.status != 200) {
+        res.status(500);
+        res.send("ERROR");
+      } else {
+        res.send("OK");
+      }
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("ERROR");
+    });
+});
+
+router.get("/:gameId", function (req, res) {
+  let gameId = req.params["gameId"];
+
+  if (gameId == "last") {
+    let game = getLastPlayed(req);
     if (game) {
-      res.render("game", {
-        game: game,
-        info: settings.options.game.info,
-        help: settings.options.game.help,
-        playfield: settings.options.game.playfield,
-        wheelRotation: settings.media.useThumbs
-          ? req.app.locals.globalSettings.thumbRotation
-          : 0,
-        playfieldRotation: settings.media.playfieldRotation,
-        refreshInterval: req.app.locals.globalSettings.currentGameRefreshTimer,
-      });
+      renderGame(req, res, game.id);
     } else {
-      renderGameError(req, res, "Game not found");
+      renderGameError(req, res, "Unable to determine last played game");
     }
+  } else if (gameId == "current") {
+    axios
+      .get(getCurItemUrl)
+      .then((response) => {
+        if (response.status != 200) {
+          renderGameError(req, res, "Unable to determine current game");
+        } else {
+          gameId = response.data.GameID;
+          renderGame(req, res, gameId);
+        }
+      })
+      .catch(() => {
+        renderGameError(req, res, "Unable to determine current game");
+      });
+  } else {
+    renderGame(req, res, gameId);
   }
+});
 
-  function escapeRegExp(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\\s]/g, "\\$&");
-  }
+function getLastPlayed(req) {
+  let sql =
+    "SELECT g.GameID, LastPlayed, NumberPlays, TimePlayedSecs " +
+    "FROM Games g JOIN GamesStats s on g.GameID = s.GameID " +
+    "ORDER BY LastPlayed DESC LIMIT 1";
 
-  function getMediaFilenames(req, res, mediaDir, extensions) {
-    const game = getGame(req.params["gameId"], req);
-    const patterns = extensions.map(
-      (ext) => escapeRegExp(game.name) + "*." + ext
-    );
-    const dir = game.emulator.dirMedia.replace(/\\/g, "/") + "/" + mediaDir;
-    const files = fs.globSync(patterns, { cwd: dir });
-    debug("app:media")(
-      "Search for '%s' in '%s' found %i files.",
-      patterns.toString(),
-      dir,
-      files.length
-    );
-    let result = [];
-    for (const file of files) {
-      result.push(
-        [req.app.locals.getMediaPath(game), mediaDir, path.basename(file)].join(
-          "/"
-        )
-      );
+  const db = require("better-sqlite3")(settings.pupServer.db.path, {
+    fileMustExist: true,
+    verbose: debug("app:sql"),
+  });
+  const row = db.prepare(sql).get();
+  db.close();
+
+  if (row) {
+    let game = getGame(row.GameID, req);
+    if (game) {
+      // update with latest stats
+      game.lastPlayed = row.LastPlayed;
+      game.numPlays = row.NumberPlays;
+      game.timePlayed = row.TimePlayedSecs;
     }
-    res.send(result);
+    return game;
   }
-
-  return router;
+  return;
 }
 
-module.exports = createRouter;
+function getGame(gameId, req) {
+  let gamePos = req.app.locals.gameIds.get(parseInt(gameId));
+  return gamePos === undefined ? gamePos : req.app.locals.games[gamePos];
+}
+
+function renderGameError(_req, res, msg) {
+  res.render("game_error", {
+    message: msg,
+  });
+}
+
+function renderGame(req, res, gameId) {
+  let game = getGame(gameId, req);
+  if (game) {
+    res.render("game", {
+      game: game,
+      info: settings.options.game.info,
+      help: settings.options.game.help,
+      playfield: settings.options.game.playfield,
+      backglass: settings.options.game.backglass,
+      allMedia: settings.options.game.allMedia,
+      wheelRotation: settings.media.useThumbs
+        ? req.app.locals.globalSettings.thumbRotation
+        : 0,
+      playfieldRotation: settings.media.playfieldRotation,
+      refreshInterval: req.app.locals.globalSettings.currentGameRefreshTimer,
+    });
+  } else {
+    renderGameError(req, res, "Game not found");
+  }
+}
+
+function escapeRegExp(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
+// MediaSearch (when set) is already an author-authored glob pattern
+// (e.g. "Attack from Mars*", "*Twilight Zone*") used to share media across
+// re-releases/mods of a table, so '*' must survive escaping unlike in a
+// plain game name.
+function escapeGlobKeepStar(text) {
+  return text.replace(/[-[\]{}()+?.,\\^$|#\s]/g, "\\$&");
+}
+
+function getMediaSearchBase(game) {
+  return game.mediaSearch
+    ? escapeGlobKeepStar(game.mediaSearch)
+    : escapeRegExp(game.name) + "*";
+}
+
+function getMediaFilenames(req, res, mediaDir, extensions) {
+  const game = getGame(req.params["gameId"], req);
+  const base = getMediaSearchBase(game);
+  const patterns = extensions.map((ext) => base + "." + ext);
+  const dir = game.emulator.dirMedia.replace(/\\/g, "/") + "/" + mediaDir;
+  const files = glob.sync(patterns, { cwd: glob.escapePath(dir) });
+  debug("app:media")(
+    "Search for '%s' in '%s' found %i files.",
+    patterns.toString(),
+    dir,
+    files.length
+  );
+  let result = [];
+  for (file of files) {
+    result.push(
+      [req.app.locals.getMediaPath(game), mediaDir, path.basename(file)].join(
+        "/"
+      )
+    );
+  }
+  res.send(result);
+}
+
+module.exports = router;

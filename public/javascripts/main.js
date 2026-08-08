@@ -3,8 +3,6 @@ $(document).ready(function () {
 
   $('[data-toggle="tooltip"]').tooltip();
 
-  $("#tabs li:eq(0) a").tab("show");
-
   $("img.wheel").on("error", function () {
     $(this).removeClass(function (index, css) {
       return (css.match(/(^|\s)rotate\S+/g) || []).join(" ");
@@ -23,6 +21,44 @@ $(document).ready(function () {
     }
   }
 
+  function fetchMedia(gameId, type) {
+    return fetch(gameId + "/" + type)
+      .then((response) => (response.status == 200 ? response.json() : []))
+      .catch(() => []);
+  }
+
+  function buildPlayfieldElement(src, rotate) {
+    if (src.endsWith(".png") || src.endsWith(".jpg")) {
+      return $("<img />", {
+        class: rotate ? "playfieldRotate" : "playfield",
+        src: src,
+      });
+    }
+    return $("<video />", {
+      class: rotate ? "playfieldRotate" : "playfield",
+      src: src,
+      type: "video/mp4",
+      playsinline: true,
+      autoplay: true,
+      loop: true,
+    });
+  }
+
+  // Backglass/Info/Help media can also be video (e.g. animated backglasses)
+  function buildImageOrVideo(src, cssClass) {
+    if (src.endsWith(".mp4")) {
+      return $("<video />", {
+        class: cssClass,
+        src: src,
+        controls: true,
+        muted: true,
+        loop: true,
+        playsinline: true,
+      });
+    }
+    return $("<img />", { class: cssClass, src: src });
+  }
+
   $('a[data-toggle="tab"]').on("show.bs.tab", function (e) {
     let target;
     if (e.target.text === "Info") {
@@ -31,6 +67,10 @@ $(document).ready(function () {
       target = "help";
     } else if (e.target.text === "Playfield") {
       target = "playfield";
+    } else if (e.target.text === "Backglass") {
+      target = "backglass";
+    } else if (e.target.text === "All Media") {
+      target = "all";
     }
 
     if (target) {
@@ -39,39 +79,40 @@ $(document).ready(function () {
           return;
         }
 
-        fetch($("#game").data("gameid") + "/" + target)
-          .then((response) => {
-            return response.status == 200 ? response.json() : [];
-          })
-          .then((data) => {
-            if (data.length) {
-              let rotate = $("#playfield").data("rotate") != undefined;
-              let src = data[0];
-              var elem;
-              if (src.endsWith(".png") || src.endsWith(".jpg")) {
-                elem = $("<img />", {
-                  class: rotate ? "playfieldRotate" : "playfield",
-                  src: src,
-                });
-              } else {
-                elem = $("<video />", {
-                  id: "vidPlayfield",
-                  class: rotate ? "playfieldRotate" : "playfield",
-                  src: data[0],
-                  type: "video/mp4",
-                  playsinline: true,
-                  autoplay: true,
-                  loop: true,
-                });
-              }
-            } else {
-              elem = $('<img src="/images/unavailable.png" />');
-            }
-            elem.appendTo($("#playfield"));
-          })
-          .catch((err) => {
-            console.log(err);
+        fetchMedia($("#game").data("gameid"), target).then((data) => {
+          let rotate = $("#playfield").data("rotate") != undefined;
+          let elem = data.length
+            ? buildPlayfieldElement(data[0], rotate)
+            : $('<img src="/images/unavailable.png" />');
+          elem.appendTo($("#playfield"));
+        });
+      } else if (target == "all") {
+        if ($("#allPlayfield").children().length) {
+          return;
+        }
+
+        let gameId = $("#game").data("gameid");
+        let rotate = $("#all").data("rotate") != undefined;
+        Promise.all([
+          fetchMedia(gameId, "playfield"),
+          fetchMedia(gameId, "backglass"),
+          fetchMedia(gameId, "info"),
+          fetchMedia(gameId, "help"),
+        ]).then(([playfieldData, backglassData, infoData, helpData]) => {
+          let playfieldElem = playfieldData.length
+            ? buildPlayfieldElement(playfieldData[0], rotate)
+            : $('<img class="img-fluid" src="/images/unavailable.png" />');
+          playfieldElem.appendTo("#allPlayfield");
+
+          [
+            ["#allBackglass", backglassData],
+            ["#allInfo", infoData],
+            ["#allHelp", helpData],
+          ].forEach(([id, data]) => {
+            let src = data.length ? data[0] : "/images/unavailable.png";
+            buildImageOrVideo(src, "img-fluid").appendTo(id);
           });
+        });
       } else {
         if (
           $("#carousel" + e.target.text + " .carousel-inner").children().length
@@ -89,13 +130,15 @@ $(document).ready(function () {
             }
             let i = 0;
             $.each(data, function (index, value) {
-              $(
-                '<div class="carousel-item"><img ' +
-                  (i == 0 ? "" : "data-") +
-                  'src="' +
-                  value +
-                  '"></div>'
-              ).appendTo("#carousel" + e.target.text + " .carousel-inner");
+              let item = $('<div class="carousel-item"></div>');
+              if (value.endsWith(".mp4")) {
+                buildImageOrVideo(value).appendTo(item);
+              } else {
+                $("<img />", i == 0 ? { src: value } : { "data-src": value }).appendTo(
+                  item
+                );
+              }
+              item.appendTo("#carousel" + e.target.text + " .carousel-inner");
               i++;
             });
             $("#carousel" + e.target.text).carousel("pause");
@@ -112,6 +155,9 @@ $(document).ready(function () {
       }
     }
   });
+
+  let defaultTab = $('#tabs a[href="#playfield"]');
+  (defaultTab.length ? defaultTab : $("#tabs li:eq(0) a")).tab("show");
 
   $(".carousel").on("slide.bs.carousel", function (e) {
     var $upcomingImage = $(e.relatedTarget).find("img");
@@ -196,7 +242,12 @@ $(document).ready(function () {
 
   function filter(type, value) {
     $("#gamesRow div").filter(function () {
-      $(this).toggle($(this).data(type) == value);
+      var data = $(this).data(type);
+      var match =
+        type === "playlist"
+          ? (data ? data.toString().split("|") : []).includes(value)
+          : data == value;
+      $(this).toggle(match);
     });
     updateGameCount();
     localStorage.setItem("filterType", type);

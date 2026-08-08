@@ -20,6 +20,12 @@ block content
         if (playfield)
           li.nav-item
             a.nav-link(href='#playfield', data-toggle='tab', data-gameid=game.id) Playfield
+        if (backglass)
+          li.nav-item
+            a.nav-link(href='#backglass', data-toggle='tab', data-gameid=game.id) Backglass
+        if (allMedia)
+          li.nav-item
+            a.nav-link(href='#all', data-toggle='tab', data-gameid=game.id) All Media
 
   #game.container-fluid(data-gameid=game.id, data-refresh=refreshInterval)
     div.tab-content
@@ -80,5 +86,28 @@ block content
             span.carousel-control-next-icon(aria-hidden='true')
             span.sr-only Next
       #playfield.tab-pane.fade(data-rotate=playfieldRotation)
+      #backglass.tab-pane.fade
+        #carouselBackglass.carousel.slide(data-ride='carousel')
+          div.carousel-inner
+          a.carousel-control-prev(href='#carouselBackglass', role='button', data-slide='prev')
+            span.carousel-control-prev-icon(aria-hidden='true')
+            span.sr-only Previous
+          a.carousel-control-next(href='#carouselBackglass', role='button', data-slide='next')
+            span.carousel-control-next-icon(aria-hidden='true')
+            span.sr-only Next
+      #all.tab-pane.fade(data-rotate=playfieldRotation)
+        div.row.text-center
+          div.col-6.col-md-3.mb-3
+            h5 Playfield
+            #allPlayfield
+          div.col-6.col-md-3.mb-3
+            h5 Backglass
+            #allBackglass
+          div.col-6.col-md-3.mb-3
+            h5 Info
+            #allInfo
+          div.col-6.col-md-3.mb-3
+            h5 Help
+            #allHelp
 
 

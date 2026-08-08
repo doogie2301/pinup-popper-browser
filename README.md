@@ -4,9 +4,8 @@
 
 This is an application powered by Node.js with Express to provide a view into your Pinup Popper system from any web browser on your internal network. It works by querying the PuP database to load the details of the games that have been configured, and presents them in a format that can be easily scrolled, filtered, or searched. The selected game can also be launched remotely from the app, which is enabled through the use of the [Web Remote Control for Pinup Popper](http://www.nailbuster.com/wikipinup/doku.php?id=web_remote_control).
 
-[![Build Status](https://github.com/doogie2301/pinup-popper-browser/actions/workflows/ci.yml/badge.svg)](https://github.com/doogie2301/pinup-popper-browser/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/doogie2301/pinup-popper-browser/branch/master/graph/badge.svg)](https://codecov.io/gh/doogie2301/pinup-popper-browser)
-[![Dependabot](https://img.shields.io/github/dependabot-status/doogie2301/pinup-popper-browser?logo=dependabot)](https://github.com/doogie2301/pinup-popper-browser/network/updates)
+[![Build Status](https://img.shields.io/travis/doogie2301/pinup-popper-browser/master)](https://travis-ci.org/doogie2301/pinup-popper-browser)
+![Dependencies](https://img.shields.io/depfu/doogie2301/pinup-popper-browser)
 
 ## Features
 
@@ -18,7 +17,7 @@ This is an application powered by Node.js with Express to provide a view into yo
     - **Current Game\*** - The game currently in view in the Pinup Popper menu or the game currently being played.
     - **Last Played\*** - The game that was last played
     - **Random Game** - A randomly selected game
-  - **Filters** - The game list can be filtered by one of the following fields: Category, Theme, Type, Decade, Emulator, Manufacturer, and Favorites.
+  - **Filters** - The game list can be filtered by one of the following fields: Category, Theme, Type, Decade, Emulator, Manufacturer, Favorites, and Playlists.
   - **Search Box** - Filters the games by name containing the entered text
 
 - **Game View** - Displays the details for a single game
@@ -31,6 +30,10 @@ This is an application powered by Node.js with Express to provide a view into yo
   - **Info** - Displays any images starting with the game name from the GameInfo media folder
   - **Help** - Displays any images starting with the gaame name from the GameHelp media folder
   - **Playfield** - Displays an image or video with the game name from the Playfield media folder
+  - **Backglass** - Displays an image or video with the game name from the Backglass media folder
+  - **All Media** - Shows the Playfield, Backglass, Info, and Help media side by side in a single view
+
+  Info, Help, Backglass, and Playfield media lookups use the game's `MediaSearch` pattern from Pinup Popper when one is set, so re-releases/mods that intentionally share media with a base table (a common Pinup Popper convention) are matched correctly instead of only ever matching the exact game name.
 
 ## Setup
 
@@ -51,8 +54,6 @@ Features with an asterisk above require the following steps:
 
 #### Using Node
 
-Requires Node.js 18 or newer.
-
 If you already have Node installed, you can download the source code and run the following commands:
 
     npm install
@@ -62,7 +63,7 @@ The advantage to this approach is that you have the ability to customize the cod
 
 #### Running without Node
 
-The application is also packaged as a standalone executable. This option does not require Node.js to be installed. Simply download and extract the contents of the latest PinUpBrowser.zip file from [the Releases tab](https://github.com/doogie2301/pinup-popper-browser/releases), and run the PinUpBrowser.exe executable.
+The application is also packaged as a standalone executable. Simply download and extract the contents of the latest PinUpBrowser.zip file from [the Releases tab](https://github.com/doogie2301/pinup-popper-browser/releases), and run the PinUpBrowser.exe executable.
 
 ### Configuration
 
@@ -100,7 +101,7 @@ The config.yml file contains settings that can be modified to support your setup
 
 * **options.game**
 
-  The Info, Help, and Playfield menu options can be enabled/disabled individually.
+  The Info, Help, Playfield, Backglass, and All Media menu options can be enabled/disabled individually.
 
   ![game_options](https://user-images.githubusercontent.com/12683011/83432039-3e49bb80-a406-11ea-8729-fcacd876ebef.png)
 

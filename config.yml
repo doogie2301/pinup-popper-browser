@@ -2,12 +2,12 @@ pupServer:
   url: http://localhost
   db:
     path: C:\PinUpSystem\PUPDatabase.db
-    filter: ifnull(GameTheme, 1) <> 'Adult'
+    filter: ifnull(GameTheme, 1) <> 'Adult' and (emuid = 1 or emuid = 4)
 
 httpServer:
   port: 3000
   logFormat: dev
-  logLevel: error
+  logLevel: debug
 
 options:
   filters:
@@ -18,10 +18,13 @@ options:
     emulator: true
     manufacturer: true
     favorites: true
+    playlist: true
   game:
     info: true
     help: true
     playfield: true
+    backglass: true
+    allMedia: true
 
 media:
   useThumbs: true

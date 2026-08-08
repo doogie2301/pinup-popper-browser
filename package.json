@@ -1,6 +1,6 @@
 {
   "name": "pinup-popper-browser",
-  "version": "0.2.0",
+  "version": "0.1.2",
   "license": "GPL-3.0",
   "description": "An app for browsing your Pinup Popper games",
   "private": true,
@@ -9,47 +9,29 @@
     "node": ">=18"
   },
   "scripts": {
-    "start": "node app",
-    "start:watch": "node --watch app.js",
-    "build": "npm run package && npm run copydist && npm run zipdist",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "package": "pkg . --targets node24-win-x64 -o dist/PinUpBrowser.exe",
-    "copydist": "powershell -NoProfile -Command \"Copy-Item -Path 'LICENSE','README.md','config.yml' -Destination 'dist' -Force\"",
-    "zipdist": "powershell -NoProfile -Command \"if (Test-Path 'dist/PinUpBrowser.zip') { Remove-Item 'dist/PinUpBrowser.zip' -Force }; Push-Location dist; Compress-Archive -Path 'PinUpBrowser.exe','LICENSE','README.md','config.yml' -DestinationPath 'PinUpBrowser.zip' -Force; Pop-Location\""
+    "start": "node app"
+ 
   },
   "bin": "app.js",
   "pkg": {
     "assets": [
       "public/**/*",
-      "views/**/*",
-      "node_modules/sql.js/dist/*.wasm"
-    ],
-    "targets": [
-      "win"
+      "views/**/*"
     ]
+
   },
   "dependencies": {
+    "axios": "^1.19.0",
+    "better-sqlite3": "^13.0.3",
+    "config-yml": "^0.10.3",
     "debug": "^4.4.3",
     "express": "^5.2.1",
-    "morgan": "^1.7.0",
+    "fast-glob": "^3.3.3",
+    "morgan": "^1.11.0",
     "pug": "^3.0.4",
-    "serve-favicon": "^2.5.0",
-    "sql.js": "^1.13.0",
-    "yaml": "^2.8.1"
+    "serve-favicon": "^2.5.1"
   },
   "devDependencies": {
-    "@yao-pkg/pkg": "^6.14.1",
-    "jest": "^30.3.0",
-    "supertest": "^7.2.2"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "collectCoverageFrom": [
-      "app.js",
-      "settings.js",
-      "routes/**/*.js"
-    ]
   },
   "repository": {
     "type": "git",

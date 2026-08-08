@@ -77,20 +77,52 @@ let sql =
   "order by gamedisplay";
 
 // map of GameID -> playlist display names, for games that made it past the
-// visibility/config filters above
-const playlistRows = db
+// visibility/config filters above.
+//
+// PlayListType 0 playlists are manually curated in Pinup Popper, so their
+// membership is read from Playlistdetails. PlayListType 1 ("smart")
+// playlists are defined by an arbitrary SQL query (PlayListSQL) instead,
+// and Playlistdetails only holds a stale/partial cache of their results
+// (e.g. a 193-game smart list may only have 69 rows cached), so those are
+// evaluated live against the Games table instead.
+const playlistsByGame = new Map();
+function addGameToPlaylist(gameId, playName) {
+  if (!playlistsByGame.has(gameId)) {
+    playlistsByGame.set(gameId, []);
+  }
+  playlistsByGame.get(gameId).push(playName);
+}
+
+const manualPlaylistRows = db
   .prepare(
     "SELECT pld.GameID, coalesce(pl.PlayDisplay, pl.PlayName) as PlayName " +
       "FROM Playlistdetails pld JOIN PlayLists pl on pld.PlayListID = pl.PlayListID " +
-      "WHERE pld.Visible and pl.Visible"
+      "WHERE pld.Visible and pl.Visible and pl.PlayListType = 0"
   )
   .all();
-const playlistsByGame = new Map();
-playlistRows.forEach((row) => {
-  if (!playlistsByGame.has(row.GameID)) {
-    playlistsByGame.set(row.GameID, []);
+manualPlaylistRows.forEach((row) => {
+  addGameToPlaylist(row.GameID, row.PlayName);
+});
+
+const smartPlaylists = db
+  .prepare(
+    "SELECT PlayListID, coalesce(PlayDisplay, PlayName) as PlayName, PlayListSQL " +
+      "FROM PlayLists WHERE Visible and PlayListType = 1 and PlayListSQL is not null and PlayListSQL <> ''"
+  )
+  .all();
+smartPlaylists.forEach((playlist) => {
+  try {
+    const gameRows = db.prepare(playlist.PlayListSQL).all();
+    gameRows.forEach((gameRow) => {
+      addGameToPlaylist(gameRow.GameID, playlist.PlayName);
+    });
+  } catch (err) {
+    console.error(
+      "Failed to evaluate PlayListSQL for playlist '%s': %s",
+      playlist.PlayName,
+      err.message
+    );
   }
-  playlistsByGame.get(row.GameID).push(row.PlayName);
 });
 
 const rows = db.prepare(sql).all();
